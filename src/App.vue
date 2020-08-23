@@ -11,22 +11,8 @@ export default {
 </script>
 
 <style>
-.header-part {
-    background: forestgreen;
-
-}
-
-.nav {
-    background: aquamarine;
-    width: 159px;
-    height: 500px;
-    float: left;
-}
-
-.content {
-    width: 800px;
-    background: beige;
-    height: 500px;
-    float: left;
+*{
+    padding: 0;
+    margin: 0;
 }
 </style>
