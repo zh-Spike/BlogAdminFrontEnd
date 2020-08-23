@@ -1,9 +1,19 @@
 <template>
     <div id="app">
         <!--自己的内容-->
-        <div>顶部内容</div>
-        <div>导航</div>
-        <router-view></router-view>
+        <div class="header-part">顶部内容</div>
+        <div class="content-box">
+            <div class="nav">
+                <router-link to="/home">首页</router-link>
+                <br>
+                <router-link to="/article">文章</router-link>
+
+            </div>
+            <div class="content">
+                <router-view></router-view>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -14,12 +24,22 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.header-part {
+    background: forestgreen;
+
+}
+
+.nav {
+    background: aquamarine;
+    width: 159px;
+    height: 500px;
+    float: left;
+}
+
+.content {
+    width: 800px;
+    background: beige;
+    height: 500px;
+    float: left;
 }
 </style>
