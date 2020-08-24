@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--显示内容-->
-        <div>test</div>
+        <div>index</div>
     </div>
 </template>
 
