@@ -86,7 +86,7 @@ export default {
 				// 处理登陆结果
 				// 判断状态
 				let data = result.data;
-				if (data.code === 20000) {
+				if (data.code === 10000) {
 					this.$message({
 						message: data.message,
 						center: true,
@@ -98,8 +98,8 @@ export default {
 				} else {
 					// 其他则给出提示
 					// 更新验证码
-					this.updateVerifyCode();
 					this.toastE(data.message);
+					this.updateVerifyCode();
 					}
 				});
 		},
@@ -116,7 +116,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .captcha-code {
 	cursor: pointer;
 	width: 120px;
@@ -163,16 +163,16 @@ export default {
 .admin-login-logo {
 	color: #ffffff;
 	font-size: 18px;
-	font-size: 600;
+	font-weight: 600;
 }
 
-.login-center-box el-input__inner {
+.login-center-box .el-input__inner {
 	border-radius: 0;
 	border-bottom: #e6e6e6 solid 1px;
 	height: 42px;
 }
 
-.login-center-box el-form-item__label {
+.login-center-box .el-form-item__label {
 	background: #FBFBFB;
 	border-left: #e6e6e6 solid 1px;
 	border-top: #e6e6e6 solid 1px;
