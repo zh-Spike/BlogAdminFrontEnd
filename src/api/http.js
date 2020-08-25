@@ -7,7 +7,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www=form-urlencoded
 export default {
     // get请求
     requestGet(url, params = {}) {
-        this.setUpCookie()
         return new Promise((resolve, reject) => {
             axios.get(url, params).then(res => {
                 resolve(res.data)
@@ -18,7 +17,6 @@ export default {
     },
     // post请求
     requestPost(url, params = {}) {
-        this.setUpCookie()
         return new Promise((resolve, reject) => {
             axios.post(url, params).then(res => {
                 resolve(res.data)
@@ -29,7 +27,6 @@ export default {
     },
     // delete请求
     requestDelete(url, params = {}) {
-        this.setUpCookie()
         return new Promise((resolve, reject) => {
             axios.delete(url, params).then(res => {
                 resolve(res.data)
@@ -40,7 +37,6 @@ export default {
     },
     // put请求
     requestPut(url, params = {}) {
-        this.setUpCookie()
         return new Promise((resolve, reject) => {
             axios.put(url, params).then(res => {
                 resolve(res.data)

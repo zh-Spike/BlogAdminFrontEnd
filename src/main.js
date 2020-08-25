@@ -5,13 +5,14 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import leftMenu from './layout/left-menu'
 import topHeader from './layout/top-header'
+import {checkToken} from "@/api/api";
 
 Vue.config.productionTip = false
 
 Vue.component('leftMenu', leftMenu);
 Vue.component('topHeader', topHeader);
 Vue.use(ElementUI);
-const axios = require('axios');
+
 router.beforeEach((to, from, next) => {
     // 如果是登录页面，则需要放行
     if (to.path === '/login') {
@@ -21,12 +22,11 @@ router.beforeEach((to, from, next) => {
         next();
     } else {
         // 否则检查用户角色
-        axios.get('/user/check-token').then(result => {
-            let res = result.data;
-            // console.log(res);
-            if (res.code === 10000) {
+        checkToken().then(result => {
+            console.log(result);
+            if (result.code === 10000) {
                 // 登录成功 判断角色
-                if (res.data.roles === 'role_admin') {
+                if (result.data.roles === 'role_admin') {
                     next();
                 } else {
                     location.href = 'https://www.baidu.com';

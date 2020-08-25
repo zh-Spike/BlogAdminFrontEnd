@@ -26,7 +26,7 @@
 								<img :src="captchaPath" @click="updateVerifyCode" class="captcha-code">
 							</el-form-item>
 							<el-form-item class="login-button">
-								<el-button type="primary" @click="doLogin" size="small" >登录</el-button>
+								<el-button type="primary" @click="doLogin" size="small">登录</el-button>
 							</el-form-item>
 						</el-form>
 					</el-col>
@@ -38,7 +38,8 @@
 </template>
 
 <script>
-const axios = require('axios');
+import {doLogin} from "@/api/api";
+
 export default {
 	data() {
 		return {
@@ -77,18 +78,12 @@ export default {
 				return;
 			}
 			// 向服务器提交数据
-			axios({
-				method: 'post',
-				url: '/user/login/' + this.loginInfo.verifyCode + '/' + this.loginInfo.captcha_key + '?from=p_',
-				data: this.user
-			}).then(result => {
-				console.log(result);
+			doLogin(this.loginInfo.verifyCode,this.loginInfo.captcha_key,this.user).then(result => {
 				// 处理登陆结果
 				// 判断状态
-				let data = result.data;
-				if (data.code === 10000) {
+				if (result.code === 10000) {
 					this.$message({
-						message: data.message,
+						message: result.message,
 						center: true,
 						type: 'success'
 					})
@@ -98,10 +93,10 @@ export default {
 				} else {
 					// 其他则给出提示
 					// 更新验证码
-					this.toastE(data.message);
+					this.toastE(result.message);
 					this.updateVerifyCode();
-					}
-				});
+				}
+			});
 		},
 		updateVerifyCode() {
 			this.captchaPath = '/user/captcha?captcha_key=' + this.loginInfo.captcha_key + "&random" + Date.parse(new Date());
