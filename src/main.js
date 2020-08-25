@@ -23,7 +23,7 @@ router.beforeEach((to, from, next) => {
     } else {
         // 否则检查用户角色
         checkToken().then(result => {
-            console.log(result);
+            // console.log(result);
             if (result.code === 10000) {
                 // 登录成功 判断角色
                 if (result.data.roles === 'role_admin') {

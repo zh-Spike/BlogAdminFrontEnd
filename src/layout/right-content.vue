@@ -1,14 +1,16 @@
 <template>
 	<div>
 		<!--显示内容-->
-		<div class="content-title-box">右边内容</div>
+		<div class="content-title-box" v-text="$route.name"></div>
 		<div class="content-container-box">
 			<router-view></router-view>
 		</div>
 	</div>
 </template>
 <script>
+	export default {
 
+	}
 </script>
 <style>
 .content-container-box{
