@@ -48,5 +48,6 @@ export default {
 <style scoped>
 .el-menu-vertical a {
 	text-decoration: none;
+	background: azure;
 }
 </style>

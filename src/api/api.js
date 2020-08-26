@@ -10,5 +10,5 @@ export const doLogin = (verifyCode, captchaKey, user) => {
 };
 // 获取分类列表
 export const listCategories = () => {
-	return http.requestPost('/admin/category/list/' );
+	return http.requestGet('/admin/category/list/' );
 };

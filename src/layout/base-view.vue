@@ -36,6 +36,7 @@ export default {
 <style>
 #left-menu-list-box .el-menu {
 	border-right: none;
+	background-color: #F2F2F2;
 }
 
 .el-header {
@@ -46,6 +47,7 @@ export default {
 
 .el-aside {
 	line-height: 200px;
+	background: #F2F2F2;
 	border-right: solid 1px #e6e6e6;
 }
 .el-main{
