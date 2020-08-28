@@ -5,7 +5,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import leftMenu from './layout/left-menu'
 import topHeader from './layout/top-header'
-import {checkToken} from "@/api/api";
+import * as api from "@/api/api";
 
 Vue.config.productionTip = false
 
@@ -22,9 +22,9 @@ router.beforeEach((to, from, next) => {
         next();
     } else {
         // 否则检查用户角色
-        checkToken().then(result => {
+        api.checkToken().then(result => {
             // console.log(result);
-            if (result.code === 10000) {
+            if (result.code === api.success_code) {
                 // 登录成功 判断角色
                 if (result.data.roles === 'role_admin') {
                     next();
