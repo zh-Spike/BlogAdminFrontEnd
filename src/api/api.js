@@ -25,3 +25,7 @@ export const postCategory = (category) => {
 export const updateCategory = (categoryId, category) => {
 	return http.requestPut('/admin/category/' + categoryId, category);
 };
+// 获取轮播图列表
+export const listLoop = () => {
+	return http.requestGet('/admin/loop/list');
+};
