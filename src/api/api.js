@@ -29,3 +29,11 @@ export const updateCategory = (categoryId, category) => {
 export const listLoop = () => {
 	return http.requestGet('/admin/loop/list');
 };
+// 添加轮播图
+export const postLoop = (loop) => {
+	return http.requestPost('/admin/loop/', loop);
+};
+// 删除轮播图
+export const deleteLoop = (loopId) => {
+	return http.requestDelete('/admin/loop/' + loopId);
+};
