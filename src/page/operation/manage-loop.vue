@@ -72,6 +72,7 @@
                     :close-on-press-escape="false"
                     :close-on-click-modal="false"
                     title="删除提示"
+                    :show-close="false"
                     :visible.sync="deleteDialogShow"
                     width="400px">
                 <span>你确定要删除: {{ deleteMessage }} 这个轮播图吗？</span>
@@ -83,6 +84,7 @@
             <el-dialog
                     :close-on-press-escape="false"
                     :close-on-click-modal="false"
+                    :show-close="false"
                     :title="loopEditorTitle"
                     :visible.sync="loopDialogShow"
                     width="600px">
@@ -118,7 +120,7 @@
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                     <el-button @click="loopDialogShow = false" type="danger" size="medium">取 消</el-button>
+                     <el-button @click="editorClose" type="danger" size="medium">取 消</el-button>
                      <el-button type="primary" @click="handleLoopEditorCommit"
                                 size="medium">{{ loopEditorDialogCommitText }}</el-button>
                 </span>
@@ -153,6 +155,10 @@ export default {
 		}
 	},
 	methods: {
+		editorClose() {
+			this.loopDialogShow = false;
+			this.resetLoop();
+		},
 		doDeleteItem() {
 			// 通过ID来删除图片
 			api.deleteLoop(this.deleteLoopId).then(result => {
@@ -183,18 +189,35 @@ export default {
 				this.$message.error('轮播图不能为空');
 				return;
 			}
-			// 提交数据
-			api.postLoop(this.loop).then(result => {
-				this.loopDialogShow = false;
-				if (result.code === api.success_code) {
-					this.$message.success(result.message);
-					// 更新列表
-					this.resetLoop();
-					this.listLoop();
-				} else {
-					this.$message.error(result.message);
-				}
-			});
+			// 判断是更新和是添加
+			// 如果有ID就是更新 否则就是添加
+			if (this.loop.id === '') {
+				// 提交数据
+				api.postLoop(this.loop).then(result => {
+					this.loopDialogShow = false;
+					if (result.code === api.success_code) {
+						this.$message.success(result.message);
+						// 更新列表
+						this.resetLoop();
+						this.listLoop();
+					} else {
+						this.$message.error(result.message);
+					}
+				});
+			} else {
+				// 更新逻辑
+				api.updateLoop(this.loop.id, this.loop).then(result => {
+					if (result.code === api.success_code) {
+						// 更新成功
+						this.loopDialogShow = false;
+						this.listLoop();
+						this.resetLoop();
+						this.$message.success(result.message);
+					} else {
+						this.$message.error(result.message);
+					}
+				})
+			}
 		},
 		beforeUpload() {
 			console.log('before upload...');
@@ -218,7 +241,16 @@ export default {
 			this.loop.imageUrl = '';
 		},
 		edit(item) {
-			console.log(item);
+			// 数据回显
+			this.loopEditorDialogCommitText = '修 改';
+			this.loopDialogShow = true;
+			this.loopEditorTitle = '修改轮播图';
+			this.loop.id = item.id;
+			this.loop.order = item.order;
+			this.loop.state = item.state;
+			this.loop.title = item.title;
+			this.loop.targetUrl = item.targetUrl;
+			this.loop.imageUrl = item.imageUrl;
 		},
 		deleteItem(item) {
 			this.deleteMessage = item.title;

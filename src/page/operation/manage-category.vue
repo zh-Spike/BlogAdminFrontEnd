@@ -20,6 +20,11 @@
                         width="120">
                 </el-table-column>
                 <el-table-column
+                        prop="pinyin"
+                        label="拼音"
+                        width="200">
+                </el-table-column>
+                <el-table-column
                         label="状态"
                         width="200">
                     <template slot-scope="scope">
@@ -30,11 +35,6 @@
                             <el-tag type="success">正常</el-tag>
                         </div>
                     </template>
-                </el-table-column>
-                <el-table-column
-                        prop="pinyin"
-                        label="拼音"
-                        width="200">
                 </el-table-column>
                 <el-table-column
                         prop="description"
@@ -76,6 +76,7 @@
             <el-dialog
                     :close-on-press-escape="false"
                     :close-on-click-modal="false"
+                    :show-close="false"
                     title="删除提示"
                     :visible.sync="deleteDialogShow"
                     width="400px">
@@ -88,6 +89,7 @@
             <el-dialog
                     :close-on-press-escape="false"
                     :close-on-click-modal="false"
+                    :show-close="false"
                     :title="editTitle"
                     :visible.sync="editorDialogShow"
                     width="500px">
@@ -119,7 +121,7 @@
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                    <el-button size="medium" type="danger" @click="editorDialogShow = false">取 消</el-button>
+                    <el-button size="medium" type="danger" @click="onEditorClose">取 消</el-button>
 					<el-button size="medium" type="primary" @click="postCategory">{{ editorCommitText }}</el-button>
 				</span>
             </el-dialog>
@@ -153,6 +155,10 @@ export default {
 		};
 	},
 	methods: {
+		onEditorClose() {
+			this.editorDialogShow = false;
+			this.resetCategory();
+		},
 		postCategory() {
 			// 检查内容
 			if (this.category.name === '') {
@@ -279,7 +285,7 @@ export default {
 </script>
 
 <style>
-.category-list-box .el-table{
+.category-list-box .el-table {
     min-height: 200px;
 }
 </style>

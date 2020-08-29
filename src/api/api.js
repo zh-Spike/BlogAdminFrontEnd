@@ -31,9 +31,21 @@ export const listLoop = () => {
 };
 // 添加轮播图
 export const postLoop = (loop) => {
-	return http.requestPost('/admin/loop/', loop);
+	return http.requestPost('/admin/loop', loop);
 };
 // 删除轮播图
 export const deleteLoop = (loopId) => {
 	return http.requestDelete('/admin/loop/' + loopId);
+};
+//  更新轮播图
+export const updateLoop = (loopId, loop) => {
+	return http.requestPut('/admin/loop/' + loopId, loop);
+};
+// 获取用户列表
+export const listUsers = (page, size) => {
+	return http.requestGet('/user/list?page=' + page + '&size=' + size);
+};
+// 获取用户列表
+export const doUserSearch = (userName, email) => {
+	return http.requestGet('/user/list?page=1&size=10&userName=' + userName + '&email=' + email);
 };
