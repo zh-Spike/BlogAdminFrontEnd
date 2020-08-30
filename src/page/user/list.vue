@@ -18,7 +18,7 @@
             >
         </div>
         <!--显示内容-->
-        <div class="list-box">
+        <div class="list-box margin-bottom-20">
             <el-table
                     v-loading="loading"
                     :data="userList"
@@ -102,6 +102,17 @@
                 </el-table-column>
             </el-table>
         </div>
+        <div class="page-navigation-box margin-bottom-20 clearfix">
+            <el-pagination
+                    class="user-list-page-navigation-bar"
+                    background
+                    @current-change="onPageChange"
+                    :current-page="pageNavigation.currentPage"
+                    :page-size="pageNavigation.pageSize"
+                    layout="prev, pager, next"
+                    :total="pageNavigation.totalCount">
+            </el-pagination>
+        </div>
     </div>
 </template>
 
@@ -120,13 +131,17 @@ export default {
 			userList: [],
 			pageNavigation: {
 				currentPage: 1,
-				totalPage: 1,
-				totalSize: 0,
-				pageSize: 5,
+				totalCount: 0,
+				pageSize: 10,
 			}
 		}
 	},
 	methods: {
+		onPageChange(page) {
+			this.pageNavigation.currentPage = page;
+			console.log(this.pageNavigation.currentPage);
+			this.listUsers();
+		},
 		cleanSearch() {
 			this.search.email = '';
 			this.search.userName = '';
@@ -134,12 +149,7 @@ export default {
 		},
 		doSearch() {
 			api.doUserSearch(this.search.userName, this.search.email).then(result => {
-				if (result.code === api.success_code) {
-					this.userList = result.data.content;
-				} else {
-					this.$message.error(result.message);
-				}
-				this.loading = false;
+				this.handleListResult(result);
 			});
 		},
 		formatDate(dateStr) {
@@ -154,17 +164,22 @@ export default {
 		},
 		listUsers() {
 			api.listUsers(this.pageNavigation.currentPage, this.pageNavigation.pageSize).then(result => {
-				if (result.code === api.success_code) {
-					this.userList = result.data.content;
-				} else {
-					this.$message.error(result.message);
-				}
-				this.loading = false;
+				this.handleListResult(result);
 			});
 			this.loading = true;
+		},
+		handleListResult(result) {
+			if (result.code === api.success_code) {
+				this.userList = result.data.content;
+				this.pageNavigation.currentPage = result.data.number + 1;
+				this.pageNavigation.totalCount = result.data.totalElements;
+				this.pageNavigation.pageSize = result.data.size;
+			} else {
+				this.$message.error(result.message);
+			}
+			this.loading = false;
 		}
 	},
-
 	mounted() {
 		this.listUsers();
 	}
@@ -173,4 +188,8 @@ export default {
 </script>
 
 <style>
+.user-list-page-navigation-bar {
+    margin-right: 50px;
+    float: right;
+}
 </style>

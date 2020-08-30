@@ -18,6 +18,6 @@
 }
 .content-title-box {
 	padding: 10px;
-	border-bottom: solid 1px #e6e6e6;
+    font-weight: 600;
 }
 </style>

@@ -6,13 +6,22 @@
 
 <script>
 export default {
-    name: 'App'
+	name: 'App'
 }
 </script>
 
 <style>
-*{
+* {
     padding: 0;
     margin: 0;
+}
+
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+
+.clearfix {
+    overflow: auto;
+    zoom: 1;
 }
 </style>
