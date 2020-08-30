@@ -3,7 +3,7 @@ import http from './http'
 export const success_code = 10000;
 // 解析token
 export const checkToken = () => {
-	return http.requestGet('/user/check-token');
+	return http.requestGet('/user/check_token');
 };
 // 登录
 export const doLogin = (verifyCode, captchaKey, user) => {
