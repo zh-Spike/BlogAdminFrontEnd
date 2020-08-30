@@ -28,10 +28,10 @@
                         label="状态"
                         width="200">
                     <template slot-scope="scope">
-                        <div v-if="scope.row.status === '0'">
+                        <div v-if="scope.row.state === '0'">
                             <el-tag type="danger">已删除</el-tag>
                         </div>
-                        <div v-if="scope.row.status === '1'">
+                        <div v-if="scope.row.state === '1'">
                             <el-tag type="success">正常</el-tag>
                         </div>
                     </template>
@@ -62,10 +62,10 @@
                         width="200">
                     <template slot-scope="scope">
                         <el-button type="primary" size="medium" @click="edit(scope.row)">编辑</el-button>
-                        <el-button type="danger" v-if="scope.row.status !== '0'" size="medium"
+                        <el-button type="danger" v-if="scope.row.state !== '0'" size="medium"
                                    @click="deleteItem(scope.row)">删除
                         </el-button>
-                        <el-button type="danger" v-if="scope.row.status === '0'" size="medium"
+                        <el-button type="danger" v-if="scope.row.state === '0'" size="medium"
                                    @click="deleteItem(scope.row)" disabled>删除
                         </el-button>
                     </template>
@@ -113,7 +113,7 @@
                             <el-input-number v-model="category.order" :min="1" :max="10"></el-input-number>
                         </el-form-item>
                         <el-form-item label="状态">
-                            <el-select v-model="category.status" placeholder="选择状态">
+                            <el-select v-model="category.state" placeholder="选择状态">
                                 <el-option label="删除" value="0"></el-option>
                                 <el-option label="正常" value="1"></el-option>
                             </el-select>
@@ -150,7 +150,7 @@ export default {
 				description: '',
 				order: 1,
 				pinyin: '',
-				status: '1'
+				state: '1'
 			}
 		};
 	},
@@ -216,7 +216,7 @@ export default {
 			this.category.order = item.order;
 			this.category.pinyin = item.pinyin;
 			this.category.id = item.id;
-			this.category.status = item.status;
+			this.category.state = item.state;
 			// console.log(item);
 			this.editorDialogShow = true;
 			this.editorCommitText = '修改分类';
@@ -227,7 +227,7 @@ export default {
 			this.category.pinyin = '';
 			this.category.order = 1;
 			this.category.id = '';
-			this.category.status = '1';
+			this.category.state = '1';
 			this.category.description = '';
 		},
 		deleteItem(item) {
