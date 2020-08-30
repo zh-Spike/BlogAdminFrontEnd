@@ -49,3 +49,7 @@ export const listUsers = (page, size) => {
 export const doUserSearch = (userName, email) => {
 	return http.requestGet('/user/list?page=1&size=10&userName=' + userName + '&email=' + email);
 };
+// 删除用户
+export const deleteUserById = (userId) => {
+	return http.requestDelete('/user/' + userId);
+};

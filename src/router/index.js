@@ -34,7 +34,6 @@ const websiteInfo = () => import("@/page/settings/website-info");
 const email = () => import("@/page/user/email");
 const info = () => import("@/page/user/info");
 const list = () => import("@/page/user/list");
-const restPassword = () => import("@/page/user/reset-password");
 /*
 布局
  */
@@ -106,13 +105,6 @@ export const routes = [
                         name: '用户列表',
                         icon: 'el-icon-user-solid',
                         component: list,
-                    },
-                    {
-                        path: 'reset-password',
-                        name: '密码重置',
-                        icon: 'el-icon-bangzhu',
-                        hidden: false,
-                        component: restPassword,
                     },
                     {
                         path: 'email',

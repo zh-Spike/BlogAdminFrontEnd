@@ -113,6 +113,41 @@
                     :total="pageNavigation.totalCount">
             </el-pagination>
         </div>
+        <div class="user-list-dialog-box">
+            <el-dialog
+                    :close-on-press-escape="false"
+                    :close-on-click-modal="false"
+                    :show-close="false"
+                    title="删除提示"
+                    :visible.sync="deleteDialogShow"
+                    width="400px">
+                <span>你确定要删除: {{ deleteUserName }} 这个用户嘛 ？</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="medium" type="primary" @click="deleteDialogShow= false">取 消</el-button>
+					<el-button size="medium" type="danger" @click="doDeleteItem">确 定</el-button>
+				</span>
+            </el-dialog>
+            <el-dialog
+                    :close-on-press-escape="false"
+                    :close-on-click-modal="false"
+                    :show-close="false"
+                    title="密码重置"
+                    :visible.sync="resetPasswordShow"
+                    width="400px">
+                <div class="reset-password-box">
+                    <div class="reset-tips-text">修改: {{'"'+ targetResetUserName +'"'}} 的密码</div>
+                    <el-form label-width="70px" size="medium">
+                        <el-form-item label="新密码" prop="pass">
+                            <el-input type="password" v-model="resetPasswordValue" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="medium" type="primary" @click="resetPasswordShow= false">取 消</el-button>
+					<el-button size="medium" type="danger" @click="doResetPassword">确 定</el-button>
+				</span>
+            </el-dialog>
+        </div>
     </div>
 </template>
 
@@ -133,41 +168,74 @@ export default {
 				currentPage: 1,
 				totalCount: 0,
 				pageSize: 10,
-			}
+			},
+			deleteDialogShow: false,
+			deleteUserName: '',
+			targetDeleteUserId: '',
+			resetPasswordShow: false,
+			resetPasswordValue: '',
+			targetResetUserName: ''
 		}
 	},
 	methods: {
+		doResetPassword() {
+
+		},
+		doDeleteItem() {
+			// 删除用户
+			api.deleteUserById(this.targetDeleteUserId).then(result => {
+				if (result.code === api.success_code) {
+					this.deleteDialogShow = false;
+					// 处理结果
+					this.$message.success(result.message);
+					this.listUsers();
+				} else {
+					this.$message.error(result.message);
+				}
+			})
+		}
+		,
 		onPageChange(page) {
 			this.pageNavigation.currentPage = page;
 			console.log(this.pageNavigation.currentPage);
 			this.listUsers();
-		},
+		}
+		,
 		cleanSearch() {
 			this.search.email = '';
 			this.search.userName = '';
 			this.listUsers();
-		},
+		}
+		,
 		doSearch() {
 			api.doUserSearch(this.search.userName, this.search.email).then(result => {
 				this.handleListResult(result);
 			});
-		},
+		}
+		,
 		formatDate(dateStr) {
 			let date = new Date(dateStr);
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		},
-		deleteItem() {
-
-		},
-		resetPassword() {
-
-		},
+		}
+		,
+		deleteItem(item) {
+			this.targetDeleteUserId = item.id;
+			this.deleteUserName = item.userName;
+			this.deleteDialogShow = true;
+		}
+		,
+		resetPassword(item) {
+			this.resetPasswordShow = true;
+			this.targetResetUserName = item.userName;
+		}
+		,
 		listUsers() {
 			api.listUsers(this.pageNavigation.currentPage, this.pageNavigation.pageSize).then(result => {
 				this.handleListResult(result);
 			});
 			this.loading = true;
-		},
+		}
+		,
 		handleListResult(result) {
 			if (result.code === api.success_code) {
 				this.userList = result.data.content;
@@ -179,7 +247,8 @@ export default {
 			}
 			this.loading = false;
 		}
-	},
+	}
+	,
 	mounted() {
 		this.listUsers();
 	}
@@ -188,6 +257,13 @@ export default {
 </script>
 
 <style>
+.reset-tips-text {
+    margin-left: 15px;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
 .user-list-page-navigation-bar {
     margin-right: 50px;
     float: right;
