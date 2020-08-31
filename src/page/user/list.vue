@@ -135,7 +135,7 @@
                     :visible.sync="resetPasswordShow"
                     width="400px">
                 <div class="reset-password-box">
-                    <div class="reset-tips-text">修改: {{'"'+ targetResetUserName +'"'}} 的密码</div>
+                    <div class="reset-tips-text">修改: {{ '"' + targetResetUserName + '"' }} 的密码</div>
                     <el-form label-width="70px" size="medium">
                         <el-form-item label="新密码" prop="pass">
                             <el-input type="password" v-model="resetPasswordValue" autocomplete="off"></el-input>
@@ -152,6 +152,7 @@
 </template>
 
 <script>
+import {hex_md5} from "@/utils/md5";
 import * as api from '@/api/api'
 import * as dateUtils from "@/utils/date";
 
@@ -174,12 +175,26 @@ export default {
 			targetDeleteUserId: '',
 			resetPasswordShow: false,
 			resetPasswordValue: '',
-			targetResetUserName: ''
+			targetResetUserName: '',
+			targetUserId: ''
 		}
 	},
 	methods: {
 		doResetPassword() {
+			// 检查密码不为空
+			if (this.resetPasswordValue === '') {
+				this.$message.error('新密码不能为空');
+				return;
+			}
+			api.resetPassword(this.targetUserId, hex_md5(this.resetPasswordValue)).then(result => {
+				if (result.code === api.success_code) {
+					this.resetPasswordShow = false;
+					this.$message.success(result.message);
+				} else {
+					this.$message.error(result.message);
+				}
 
+			})
 		},
 		doDeleteItem() {
 			// 删除用户
@@ -227,6 +242,7 @@ export default {
 		resetPassword(item) {
 			this.resetPasswordShow = true;
 			this.targetResetUserName = item.userName;
+			this.targetUserId = item.id;
 		}
 		,
 		listUsers() {

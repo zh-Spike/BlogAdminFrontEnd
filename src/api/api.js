@@ -53,3 +53,7 @@ export const doUserSearch = (userName, email) => {
 export const deleteUserById = (userId) => {
 	return http.requestDelete('/user/' + userId);
 };
+// 重置密码
+export const resetPassword = (userId, newPassword) => {
+	return http.requestPut('/user/reset_password/' + userId + '?password=' + newPassword);
+};
