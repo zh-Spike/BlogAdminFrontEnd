@@ -57,3 +57,11 @@ export const deleteUserById = (userId) => {
 export const resetPassword = (userId, newPassword) => {
 	return http.requestPut('/user/reset_password/' + userId + '?password=' + newPassword);
 };
+// 获取邮箱验证码
+export const getVerifyCode = (emailAddress, type) => {
+	return http.requestGet('/user/verify_code?email=' + emailAddress + '&type=' + type);
+};
+// 重置邮箱                                                                           ;
+export const updateEmailAddress = (emailAddress, verifyCode) => {
+	return http.requestPut('/user/email?email=' + emailAddress + '&verify_code=' + verifyCode);
+};
