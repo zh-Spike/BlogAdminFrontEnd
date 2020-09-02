@@ -74,3 +74,19 @@ export const checkUserName = (userName) => {
 export const updateUserInfo = (userInfo, userId) => {
 	return http.requestPut('/user/user_info/' + userId, userInfo);
 };
+// 获取网站信息
+export const getSeoInfo = () => {
+	return http.requestGet('/admin/web_site_info/seo');
+};
+// 获取网站标题
+export const getSeoTitle = () => {
+	return http.requestGet('/admin/web_site_info/title');
+};
+// 更新网站标题
+export const updateWebsiteTitle = (title) => {
+	return http.requestPut('/admin/web_site_info/title?title=' + title);
+};
+// 更新网站标题
+export const updateSeoInfo = (keywords, description) => {
+	return http.requestPut('/admin/web_site_info/seo?description=' + description + '&keywords=' + keywords);
+};
