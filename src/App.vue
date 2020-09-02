@@ -11,9 +11,10 @@ export default {
 </script>
 
 <style>
-#app{
+#app {
     min-width: 1140px;
 }
+
 * {
     padding: 0;
     margin: 0;
@@ -21,6 +22,10 @@ export default {
 
 .margin-bottom-20 {
     margin-bottom: 20px;
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px;
 }
 
 .clearfix {

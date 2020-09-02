@@ -1,6 +1,6 @@
 <template>
     <div class="loop-box">
-        <div class="loop-action-bar">
+        <div class="loop-action-bar margin-bottom-10">
             <el-button type="primary" size="medium" @click="showAddLoop">添加轮播图</el-button>
         </div>
         <div class="loop-list-box">

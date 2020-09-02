@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--显示内容-->
-        <div class="content-title-box margin-bottom-20" v-text="$route.name"></div>
+        <div class="content-title-box margin-bottom-10" v-text="$route.name"></div>
         <div class="content-container-box">
             <router-view></router-view>
         </div>

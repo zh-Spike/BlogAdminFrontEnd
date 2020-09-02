@@ -1,6 +1,7 @@
 import http from './http'
 
 export const success_code = 10000;
+export const failed_code = 40000;
 // 解析token
 export const checkToken = () => {
 	return http.requestGet('/user/check_token');
@@ -61,7 +62,15 @@ export const resetPassword = (userId, newPassword) => {
 export const getVerifyCode = (emailAddress, type) => {
 	return http.requestGet('/user/verify_code?email=' + emailAddress + '&type=' + type);
 };
-// 重置邮箱                                                                           ;
+// 重置邮箱
 export const updateEmailAddress = (emailAddress, verifyCode) => {
 	return http.requestPut('/user/email?email=' + emailAddress + '&verify_code=' + verifyCode);
+};
+// 检查用户名是否占用
+export const checkUserName = (userName) => {
+	return http.requestGet('/user/user_name?userName=' + userName);
+};
+// 更新用户信息
+export const updateUserInfo = (userInfo, userId) => {
+	return http.requestPut('/user/user_info/' + userId, userInfo);
 };
