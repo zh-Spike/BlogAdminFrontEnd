@@ -74,7 +74,7 @@ export const checkUserName = (userName) => {
 export const updateUserInfo = (userInfo, userId) => {
 	return http.requestPut('/user/user_info/' + userId, userInfo);
 };
-// 获取网站信息
+// 获取SEO信息
 export const getSeoInfo = () => {
 	return http.requestGet('/admin/web_site_info/seo');
 };
@@ -86,7 +86,11 @@ export const getSeoTitle = () => {
 export const updateWebsiteTitle = (title) => {
 	return http.requestPut('/admin/web_site_info/title?title=' + title);
 };
-// 更新网站标题
+// 更新网站SEO
 export const updateSeoInfo = (keywords, description) => {
 	return http.requestPut('/admin/web_site_info/seo?description=' + description + '&keywords=' + keywords);
+};
+// 获取友情链接
+export const listFriendLinks = () => {
+	return http.requestGet('/admin/friend_link/list');
 };

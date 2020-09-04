@@ -32,7 +32,7 @@
                            v-model="showAvatarCutter"
                            :width="300"
                            :height="300"
-                           url="/admin/image"
+                           url="/admin/image/avatar"
                            img-format="png"></avatar-upload>
         </div>
     </div>

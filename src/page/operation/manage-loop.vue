@@ -108,7 +108,7 @@
                         <el-form-item label="封面">
                             <el-upload
                                     class="avatar-uploader"
-                                    action="/admin/image"
+                                    action="/admin/image/loop"
                                     :show-file-list="false"
                                     :on-success="uploadSuccess"
                                     :before-upload="beforeUpload">
