@@ -226,7 +226,7 @@ export default {
 			if (response.code === api.success_code) {
 				// 上传成功
 				// 回显图片
-				this.loop.imageUrl = 'http://localhost:8082/portal/image/' + response.data.id;
+				this.loop.imageUrl = this.blog_constant.baseUrl + '/portal/image/' + response.data.id;
 				this.$message.success(response.message);
 			} else {
 				this.$message.error(response.message);
@@ -243,8 +243,8 @@ export default {
 		edit(item) {
 			// 数据回显
 			this.loopEditorDialogCommitText = '修 改';
-			this.loopDialogShow = true;
 			this.loopEditorTitle = '修改轮播图';
+			this.loopDialogShow = true;
 			this.loop.id = item.id;
 			this.loop.order = item.order;
 			this.loop.state = item.state;
@@ -262,6 +262,8 @@ export default {
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
 		},
 		showAddLoop() {
+			this.loopEditorDialogCommitText = '添 加';
+			this.loopEditorTitle = '添加轮播图';
 			this.loopDialogShow = true;
 		},
 		listLoop() {

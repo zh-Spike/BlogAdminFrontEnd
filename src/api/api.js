@@ -94,3 +94,15 @@ export const updateSeoInfo = (keywords, description) => {
 export const listFriendLinks = () => {
 	return http.requestGet('/admin/friend_link/list');
 };
+// 添加友情链接
+export const postFriendLink = (friendLink) => {
+	return http.requestPost('/admin/friend_link', friendLink);
+};
+// 更新友情链接
+export const updateFriendLink = (friendLink, linkId) => {
+	return http.requestPut('/admin/friend_link/' + linkId, friendLink);
+};
+// 删除友情链接
+export const deleteFriendLink = (linkId) => {
+	return http.requestDelete('/admin/friend_link/' + linkId);
+};

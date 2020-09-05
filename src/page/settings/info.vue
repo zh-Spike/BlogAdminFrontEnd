@@ -66,7 +66,7 @@ export default {
 			if (response.code === api.success_code) {
 				// 上传成功
 				this.$message.success(response.message);
-				this.userInfo.avatar = 'http://localhost:8082/portal/image/' + response.data.id;
+				this.userInfo.avatar = this.blog_constant.baseUrl + '/portal/image/' + response.data.id;
 			} else {
 				this.$message.error(response.message);
 			}

@@ -23,7 +23,8 @@
                         width="200"
                         label="logo">
                     <template slot-scope="scope">
-                        <el-image fit="cover" :src="scope.row.logo" class="friend-link-image"></el-image>
+                        <el-image fit="cover" :src="blog_constant.baseUrl+scope.row.logo"
+                                  class="friend-link-image"></el-image>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -98,25 +99,39 @@
                         <el-form-item label="logo">
                             <div class="friend-link-image-upload" @click="showLinkLogoDialog">
                                 <i class="el-icon-plus" v-if="link.logo===''"></i>
-                                <el-image v-else :src="'http://localhost:8082'+link.logo"></el-image>
+                                <el-image v-else :src="blog_constant.baseUrl+link.logo"></el-image>
                             </div>
                         </el-form-item>
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
                      <el-button @click="editorClose" type="danger" size="medium">取 消</el-button>
-                     <el-button type="primary" @click="handleLoopEditorCommit"
+                     <el-button type="primary" @click="handleFriendLinkEditorCommit"
                                 size="medium">{{ friendLinkEditorDialogCommitText }}</el-button>
+				</span>
+            </el-dialog>
+            <el-dialog
+                    :close-on-press-escape="false"
+                    :close-on-click-modal="false"
+                    title="删除提示"
+                    :show-close="false"
+                    :visible.sync="deleteDialogShow"
+                    width="400px">
+                <span>你确定要删除: {{ deleteMessage }} 这个友情链接吗？</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="medium" type="primary" @click="deleteDialogShow= false">取 消</el-button>
+					<el-button size="medium" type="danger" @click="doDeleteItem">确 定</el-button>
                 </span>
             </el-dialog>
             <avatar-upload field="file"
                            @crop-upload-success="cropUploadSuccess"
                            @crop-upload-fail="cropUploadFail"
                            v-model="showLinkLogoCutter"
-                           :width="300"
-                           :height="300"
+                           :width="200"
+                           :height="74"
                            url="/admin/image/link"
-                           img-format="png"></avatar-upload>
+                           img-format="png">
+            </avatar-upload>
         </div>
     </div>
 </template>
@@ -132,6 +147,8 @@ export default {
 	},
 	data() {
 		return {
+			deleteMessage: '',
+			deleteDialogShow: false,
 			showLinkLogoCutter: false,
 			friendLinkEditorDialogCommitText: '添 加',
 			friendLinkDialogShow: false,
@@ -139,15 +156,30 @@ export default {
 			loading: false,
 			links: [],
 			link: {
+				id: '',
 				name: '',
 				logo: '',
 				order: 0,
 				state: '1',
 				url: ''
 			},
+			targetDeleteLinkId: ''
 		}
 	},
 	methods: {
+		edit(item) {
+			this.friendLinkEditorDialogCommitText = '更 新';
+			this.friendEditorTitle = '更新友情链接';
+			// 回显数据
+			this.link.id = item.id;
+			this.link.name = item.name;
+			this.link.logo = item.logo;
+			this.link.order = item.order;
+			this.link.state = item.state;
+			this.link.url = item.url;
+			// 弹窗
+			this.friendLinkDialogShow = true;
+		},
 		showLinkLogoDialog() {
 			this.showLinkLogoCutter = true;
 		},
@@ -177,25 +209,82 @@ export default {
 		},
 		showFriendLinkDialog() {
 			this.friendLinkDialogShow = true;
+			this.friendLinkEditorDialogCommitText = '添 加';
+			this.friendEditorTitle = '添加友情链接';
 		},
 		editorClose() {
 			this.friendLinkDialogShow = false;
 		},
-		handleLoopEditorCommit() {
+		handleFriendLinkEditorCommit() {
 			// 添加
 			// 检查内容
 			if (this.link.name === '') {
 				this.$message.error("链接名称不能为空");
+				return;
 			}
 			if (this.link.url === '') {
 				this.$message.error("跳转链接不能为空");
+				return;
 			}
 			if (this.link.logo === '') {
-				this.$message.error("logo不能为空");
+				this.$message.error("Logo不能为空");
+				return;
+			}
+			// 判断是更新还是添加
+			// 如果有ID就更新 不然是添加
+			if (this.link.id !== '') {
+				// 更新
+				// 提交数据
+				api.updateFriendLink(this.link, this.link.id).then(result => {
+					if (result.code === api.success_code) {
+						this.friendLinkDialogShow = false;
+						this.$message.success(result.message);
+						this.listLinks();
+						// 重置内容
+						this.resetLink();
+					} else {
+						this.$message.error(result.message);
+					}
+				});
+
+			} else {
+				// 提交数据
+				api.postFriendLink(this.link).then(result => {
+					if (result.code === api.success_code) {
+						this.friendLinkDialogShow = false;
+						this.$message.success(result.message);
+						this.listLinks();
+						// 重置内容
+						this.resetLink();
+					} else {
+						this.$message.error(result.message);
+					}
+				});
 			}
 		},
+		resetLink() {
+			this.link.name = '';
+			this.link.logo = '';
+			this.link.order = 0;
+			this.link.state = '1';
+			this.link.url = '';
+		},
+		deleteItem(item) {
+			this.targetDeleteLinkId = item.id;
+			this.deleteMessage = item.name;
+			this.deleteDialogShow = true;
+		},
 		doDeleteItem() {
-
+			api.deleteFriendLink(this.targetDeleteLinkId).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					this.listLinks();
+					this.deleteDialogShow = false;
+					this.targetDeleteLinkId = '';
+				} else {
+					this.$message.error(result.message);
+				}
+			})
 		},
 	},
 	mounted() {
