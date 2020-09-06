@@ -285,6 +285,10 @@ export default {
 </script>
 
 <style>
+.category-box {
+    padding: 20px;
+}
+
 .category-list-box .el-table {
     min-height: 200px;
 }

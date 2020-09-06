@@ -295,6 +295,10 @@ export default {
 </script>
 
 <style>
+.settings-friend-link-box {
+    padding: 20px;
+}
+
 .friend-link-image img {
     width: 100px;
     height: 37px;

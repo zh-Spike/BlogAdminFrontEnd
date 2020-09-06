@@ -273,6 +273,10 @@ export default {
 </script>
 
 <style>
+.user-list-box {
+    padding: 20px;
+}
+
 .reset-tips-text {
     margin-left: 15px;
     font-weight: 600;

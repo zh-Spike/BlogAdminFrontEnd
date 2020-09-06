@@ -1,7 +1,6 @@
 <template>
-    <div>
-        <!--显示内容-->
-        文章管理
+    <div class="article-post-box">
+
     </div>
 </template>
 
@@ -9,5 +8,5 @@
 
 </script>
 
-<style scoped>
+<style>
 </style>

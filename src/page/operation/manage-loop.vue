@@ -284,6 +284,10 @@ export default {
 </script>
 
 <style>
+.loop-box {
+    padding: 20px;
+}
+
 .loop-title {
     text-decoration: none;
 }

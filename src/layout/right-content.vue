@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="right-content-container">
         <!--显示内容-->
-        <div class="content-title-box margin-bottom-10" v-text="$route.name"></div>
+        <div class="content-title-box " v-text="$route.name"></div>
         <div class="content-container-box">
             <router-view></router-view>
         </div>
@@ -12,11 +12,11 @@ export default {}
 </script>
 <style>
 .content-container-box {
-    padding: 10px;
 }
 
 .content-title-box {
     padding: 10px;
-    font-weight: 600;
+    font-size: 20px;
+    line-height: 30px;
 }
 </style>
