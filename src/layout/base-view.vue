@@ -29,6 +29,10 @@ export default {
 </script>
 
 <style>
+#left-menu-list-box {
+    z-index: 2000;
+}
+
 .main-container {
     position: absolute;
     top: 46px;

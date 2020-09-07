@@ -11,13 +11,16 @@
             </div>
             <!--内容编辑-->
             <div class="article-post-part margin-bottom-20">
-                <mavon-editor v-model="article.content"/>
+                <mavon-editor
+                        v-model="article.content"
+                        @htmlCode="htmlCode"
+                        @change="onContentChange"/>
             </div>
             <!--文章设置:
 			分类、封面、标签
 			-->
             <div class="article-post-settings-part">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                <el-form label-width="100px">
                     <el-form-item label="文章分类" required>
                         <el-select v-model="article.categoryId" placeholder="请选择分类" size="medium">
                             <el-option
@@ -37,7 +40,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item label="封面" required>
-                        <div class="article-cover-selector">
+                        <div class="article-cover-selector" @click="showImageSelector">
                             <i class="el-icon-plus" v-if="article.cover===''"></i>
                             <el-image v-else :src="article.cover"></el-image>
                         </div>
@@ -59,7 +62,9 @@
                                 size="small"
                                 @keyup.enter.native="handleLabelInputConfirm">
                         </el-input>
-                        <el-button v-else class="button-new-tag" size="small" @click="showLabelInput">+ 添加标签</el-button>
+                        <el-button v-if="!labelInputVisible && !isEnough" class="button-new-tag" size="small"
+                                   @click="showLabelInput"> + 添加标签
+                        </el-button>
 
                     </el-form-item>
 
@@ -68,11 +73,36 @@
             <!--发布/草稿/预览按钮-->
             <div class="article-post-action-bar clear-fix">
                 <div class="action-btn-container">
-                    <el-button plain>全屏预览</el-button>
-                    <el-button plain>保存草稿</el-button>
-                    <el-button type="primary">发表文章</el-button>
+                    <el-button size="medium" plain>全屏预览</el-button>
+                    <el-button size="medium" plain>保存草稿</el-button>
+                    <el-button size="medium" type="primary">发表文章</el-button>
                 </div>
             </div>
+        </div>
+        <div class="article-post-dialog-box">
+            <el-dialog
+                    title="图片选择"
+                    :visible.sync="isImageSelectorShow"
+                    width="600">
+                <div class="image-selector-box">
+                    <div class="image-action-bar">
+                        <el-button>上传图片</el-button>
+                    </div>
+                    <div class="image-selector-list clear-fix">
+                        <el-radio-group v-model="selectedImageUrl">
+                            <el-radio-button v-for="(item,index) in images" :key="index" :label="item.url">
+                                <el-image fit="cover"
+                                          :src="blog_constant.baseUrl+'/portal/image/'+item.url">
+                                </el-image>
+                            </el-radio-button>
+                        </el-radio-group>
+                    </div>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="isImageSelectorShow = false" size="medium">取 消</el-button>
+                        <el-button type="primary" @click="onImageSelected" size="medium">确 定</el-button>
+                </span>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -83,6 +113,9 @@ import * as api from '@/api/api';
 export default {
 	data() {
 		return {
+			selectedImageUrl: '',
+			isImageSelectorShow: false,
+			isEnough: false,
 			labelNewValue: '',
 			labelInputVisible: false,
 			labels: ['java', 'vue.js'],
@@ -93,18 +126,54 @@ export default {
 				categoryId: '',
 				summary: '',
 				cover: '',
-			}
+			},
+			images: [],
 		}
 	},
 	methods: {
+		onImageSelected() {
+			this.isImageSelectorShow = false;
+			console.log(this.selectedImageUrl);
+		},
+		showImageSelector() {
+			this.isImageSelectorShow = true;
+		},
+		htmlCode(status, value) {
+			console.log(status);
+			console.log(value);
+		},
+		onContentChange(value, render) {
+			console.log(value);
+			console.log(render);
+		},
 		showLabelInput() {
-
+			// 判断个数 限制5个
+			// 控制输入框的显示
+			if (this.labels.length < 5) {
+				this.labelInputVisible = true;
+			} else {
+				this.labelInputVisible = false;
+			}
 		},
 		handleLabelInputConfirm() {
-
+			// 时机: 回车
+			if (this.labels.length < 5) {
+				this.labels.push(this.labelNewValue);
+				this.labelNewValue = '';
+			}
+			// 如果加完后5个后 隐藏输入框
+			if (this.labels.length >= 5) {
+				this.labelInputVisible = false;
+				this.isEnough = true;
+			}
 		},
-		deleteLabel() {
-
+		deleteLabel(label) {
+			// 从数组里删除
+			this.labels.splice(this.labels.indexOf(label), 1);
+			if (this.labels.length < 5) {
+				this.isEnough = false;
+				this.labelInputVisible = true;
+			}
 		},
 		listCategories() {
 			api.listCategories().then(result => {
@@ -113,10 +182,18 @@ export default {
 				}
 			});
 		},
+		listImages() {
+			api.listImages(1, 15, 'article').then(result => {
+				if (result.code === api.success_code) {
+					this.images = result.data.content;
+				}
+			});
+		},
 	},
 	mounted() {
 		// 获取文章分类
 		this.listCategories();
+		this.listImages();
 	}
 
 
@@ -124,6 +201,21 @@ export default {
 </script>
 
 <style>
+.image-selector-list img {
+    width: 150px;
+    height: 150px;
+    float: left;
+    margin: 10px;
+}
+
+.article-post-dialog-box .el-dialog__header {
+    display: none;
+}
+
+.input-new-label {
+    width: 120px;
+}
+
 .article-title-part input {
     border: none;
     padding-left: 20px;
@@ -136,7 +228,7 @@ export default {
 
 .article-cover-selector i {
     line-height: 140px;
-    color: #DCDFE6;
+    color: #E5E5E5;
     font-size: 20px;
 }
 
@@ -146,7 +238,7 @@ export default {
     cursor: pointer;
     border-radius: 4px;
     text-align: center;
-    border: #DCDFE6 dashed 1px;
+    border: #E5E5E5 dashed 1px;
 }
 
 .article-post-settings-part .el-textarea {
@@ -159,10 +251,11 @@ export default {
 }
 
 .article-post-part {
-    background: #99ffaa;
+
 }
 
 .article-post-settings-part {
+    margin-bottom: 120px;
 }
 
 .action-btn-container {
@@ -172,6 +265,16 @@ export default {
 }
 
 .article-post-action-bar {
-    background: #98;
+    background: #ffffff;
+    border-top: #E5E5E5 solid 1px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin-left: -220px;
+}
+
+.article-post-part .v-note-op {
+    position: sticky;
+    top: 0;
 }
 </style>

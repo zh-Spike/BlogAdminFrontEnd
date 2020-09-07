@@ -106,3 +106,7 @@ export const updateFriendLink = (friendLink, linkId) => {
 export const deleteFriendLink = (linkId) => {
 	return http.requestDelete('/admin/friend_link/' + linkId);
 };
+// 获取图片列表
+export const listImages = (page, size, original) => {
+	return http.requestGet('/admin/image/list/' + page + '/' + size + '?origin=' + original);
+};
