@@ -208,50 +208,42 @@ export default {
 					this.$message.error(result.message);
 				}
 			})
-		}
-		,
+		},
 		onPageChange(page) {
 			this.pageNavigation.currentPage = page;
 			console.log(this.pageNavigation.currentPage);
 			this.listUsers();
-		}
-		,
+		},
 		cleanSearch() {
 			this.search.email = '';
 			this.search.userName = '';
 			this.listUsers();
-		}
-		,
+		},
 		doSearch() {
 			api.doUserSearch(this.search.userName, this.search.email).then(result => {
 				this.handleListResult(result);
 			});
-		}
-		,
+		},
 		formatDate(dateStr) {
 			let date = new Date(dateStr);
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		}
-		,
+		},
 		deleteItem(item) {
 			this.targetDeleteUserId = item.id;
 			this.deleteUserName = item.userName;
 			this.deleteDialogShow = true;
-		}
-		,
+		},
 		resetPassword(item) {
 			this.resetPasswordShow = true;
 			this.targetResetUserName = item.userName;
 			this.targetUserId = item.id;
-		}
-		,
+		},
 		listUsers() {
 			api.listUsers(this.pageNavigation.currentPage, this.pageNavigation.pageSize).then(result => {
 				this.handleListResult(result);
 			});
 			this.loading = true;
-		}
-		,
+		},
 		handleListResult(result) {
 			if (result.code === api.success_code) {
 				this.userList = result.data.content;
@@ -263,8 +255,7 @@ export default {
 			}
 			this.loading = false;
 		}
-	}
-	,
+	},
 	mounted() {
 		this.listUsers();
 	}

@@ -83,10 +83,18 @@
             <el-dialog
                     title="图片选择"
                     :visible.sync="isImageSelectorShow"
-                    width="600">
+                    width="500">
                 <div class="image-selector-box">
                     <div class="image-action-bar">
-                        <el-button>上传图片</el-button>
+                        <el-upload
+                                class="image-selector-uploader"
+                                action="/admin/image/article"
+                                :show-file-list="false"
+                                :on-success="uploadSuccess"
+                                :on-error="onUploadError"
+                                accept="image/*">
+                            <el-button size="medium">上传图片</el-button>
+                        </el-upload>
                     </div>
                     <div class="image-selector-list clear-fix">
                         <el-radio-group v-model="selectedImageUrl">
@@ -97,6 +105,17 @@
                             </el-radio-button>
                         </el-radio-group>
                     </div>
+                </div>
+                <div class="image-picker-navigation">
+                    <el-pagination
+                            class="user-list-page-navigation-bar"
+                            background
+                            @current-change="onPageChange"
+                            :current-page="pageNavigation.currentPage"
+                            :page-size="pageNavigation.pageSize"
+                            layout="prev, pager, next"
+                            :total="pageNavigation.totalCount">
+                    </el-pagination>
                 </div>
                 <span slot="footer" class="dialog-footer">
                         <el-button @click="isImageSelectorShow = false" size="medium">取 消</el-button>
@@ -113,6 +132,11 @@ import * as api from '@/api/api';
 export default {
 	data() {
 		return {
+			pageNavigation: {
+				currentPage: 1,
+				totalCount: 0,
+				pageSize: 15,
+			},
 			selectedImageUrl: '',
 			isImageSelectorShow: false,
 			isEnough: false,
@@ -131,6 +155,20 @@ export default {
 		}
 	},
 	methods: {
+		onPageChange(page) {
+			this.pageNavigation.currentPage = page;
+			this.listImages();
+		},
+		onUploadError() {
+			this.$message.error("图片上传失败");
+		},
+		uploadSuccess(response) {
+			if (response.code === api.success_code) {
+				this.$message.success(response.message);
+				// 更新列表
+				this.listImages();
+			}
+		},
 		onImageSelected() {
 			this.isImageSelectorShow = false;
 			console.log(this.selectedImageUrl);
@@ -183,9 +221,14 @@ export default {
 			});
 		},
 		listImages() {
-			api.listImages(1, 15, 'article').then(result => {
+			api.listImages(this.pageNavigation.currentPage, this.pageNavigation.pageSize, 'article').then(result => {
 				if (result.code === api.success_code) {
 					this.images = result.data.content;
+					this.pageNavigation.currentPage = result.data.number + 1;
+					this.pageNavigation.totalCount = result.data.totalElements;
+					this.pageNavigation.pageSize = result.data.size;
+				} else {
+					this.$message.error(result.message());
 				}
 			});
 		},
@@ -201,11 +244,19 @@ export default {
 </script>
 
 <style>
+.image-picker-navigation {
+    margin-top: 20px;
+}
+
+.image-action-bar {
+    padding-left: 5px;
+    margin-bottom: 20px;
+}
+
 .image-selector-list img {
-    width: 150px;
-    height: 150px;
+    width: 179px;
+    height: 179px;
     float: left;
-    margin: 10px;
 }
 
 .article-post-dialog-box .el-dialog__header {
@@ -276,5 +327,13 @@ export default {
 .article-post-part .v-note-op {
     position: sticky;
     top: 0;
+}
+
+.image-selector-list .el-radio-button__inner,
+.el-radio-button:first-child .el-radio-button__inner,
+.el-radio-button:last-child .el-radio-button__inner {
+    border: none;
+    padding: 3px;
+    border-radius: 4px;
 }
 </style>
