@@ -32,7 +32,7 @@
                             <el-tag type="danger">已删除</el-tag>
                         </div>
                         <div v-if="scope.row.state === '1'">
-                            <el-tag type="success">正常</el-tag>
+                            <el-tag type="success">正 常</el-tag>
                         </div>
                     </template>
                 </el-table-column>

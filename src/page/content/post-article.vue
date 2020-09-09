@@ -13,8 +13,11 @@
             <div class="article-post-part margin-bottom-20">
                 <mavon-editor
                         v-model="article.content"
+                        ref="mdEditor"
                         @htmlCode="htmlCode"
-                        @change="onContentChange"/>
+                        @onImageClick="onEditorImageClick"
+                        @change="onContentChange">
+                </mavon-editor>
             </div>
             <!--文章设置:
 			分类、封面、标签
@@ -42,7 +45,8 @@
                     <el-form-item label="封面" required>
                         <div class="article-cover-selector" @click="showImageSelector">
                             <i class="el-icon-plus" v-if="article.cover===''"></i>
-                            <el-image v-else :src="article.cover"></el-image>
+                            <el-image fit="cover" v-else
+                                      :src="blog_constant.baseUrl+'/portal/image/'+article.cover"></el-image>
                         </div>
                     </el-form-item>
                     <el-form-item label="标签" class="label-input-box" required>
@@ -73,9 +77,9 @@
             <!--发布/草稿/预览按钮-->
             <div class="article-post-action-bar clear-fix">
                 <div class="action-btn-container">
-                    <el-button size="medium" plain>全屏预览</el-button>
-                    <el-button size="medium" plain>保存草稿</el-button>
-                    <el-button size="medium" type="primary">发表文章</el-button>
+                    <el-button size="medium" plain @click="preView">全屏预览</el-button>
+                    <el-button size="medium" plain @click="saveArticleDraft">保存草稿</el-button>
+                    <el-button size="medium" type="primary" @click="commitArticle">发表文章</el-button>
                 </div>
             </div>
         </div>
@@ -97,8 +101,8 @@
                         </el-upload>
                     </div>
                     <div class="image-selector-list clear-fix">
-                        <el-radio-group v-model="selectedImageUrl">
-                            <el-radio-button v-for="(item,index) in images" :key="index" :label="item.url">
+                        <el-radio-group v-model="selectedImageIndex">
+                            <el-radio-button v-for="(item,index) in images" :key="index" :label="index">
                                 <el-image fit="cover"
                                           :src="blog_constant.baseUrl+'/portal/image/'+item.url">
                                 </el-image>
@@ -128,16 +132,22 @@
 
 <script>
 import * as api from '@/api/api';
+import editor from '../../../lib/mavon-editor/mavon-editor';
+import '../../../lib/mavon-editor/css/index.css';
+import Vue from 'vue';
+
+Vue.use(editor);
 
 export default {
 	data() {
 		return {
+			imageSelectFor: '',
 			pageNavigation: {
 				currentPage: 1,
 				totalCount: 0,
 				pageSize: 15,
 			},
-			selectedImageUrl: '',
+			selectedImageIndex: 0,
 			isImageSelectorShow: false,
 			isEnough: false,
 			labelNewValue: '',
@@ -150,11 +160,87 @@ export default {
 				categoryId: '',
 				summary: '',
 				cover: '',
+				label: '',
+				state: '1',
+				type: '1',
 			},
 			images: [],
 		}
 	},
 	methods: {
+		preView() {
+			this.$refs.mdEditor.toolbar_right_click('read');
+		},
+		saveArticleDraft() {
+			// 检查标题
+			if (this.article.title === '') {
+				this.$message.error('标题不能为空');
+				return;
+			}
+			// 修改状态
+			this.article.state = '2';
+			// 提交数据
+			api.saveArticleDraft(this.article).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					// 跳转到文章列表页面
+					this.$router.push({
+						path: '/content/manage-article'
+					})
+				} else {
+					this.$message.error(result.message);
+				}
+			});
+		},
+		commitArticle() {
+			// 检查内容:  标题 内容 摘要 分类 封面
+			if (this.article.title === '') {
+				this.$message.error('标题不能为空');
+				return;
+			}
+			if (this.article.content === '') {
+				this.$message.error('内容不能为空');
+				return;
+			}
+			if (this.article.categoryId === '') {
+				this.$message.error('分类不能为空');
+				return;
+			}
+			if (this.article.summary === '') {
+				this.$message.error('摘要不能为空');
+				return;
+			}
+			if (this.article.cover === '') {
+				this.$message.error('请设置文章封面');
+				return;
+			}
+			if (this.labels.length === 0) {
+				this.$message.error('请设置标签');
+				return;
+			}
+			let tempLabels;
+			// 处理标签
+			this.labels.forEach((item, index) => {
+				tempLabels += item;
+				if (index !== this.labels.length - 1) {
+					tempLabels += '-';
+				}
+			});
+			this.article.label = tempLabels;
+			console.log('label ==> ' + this.article.label);
+			// 提交数据
+			api.postArticle(this.article).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					// 跳转到文章列表页面
+					this.$router.push({
+						path: '/content/manager-article'
+					})
+				} else {
+					this.$message.error(result.message);
+				}
+			});
+		},
 		onPageChange(page) {
 			this.pageNavigation.currentPage = page;
 			this.listImages();
@@ -169,11 +255,32 @@ export default {
 				this.listImages();
 			}
 		},
+		onEditorImageClick() {
+			this.imageSelectFor = "article";
+			// 显示图片编辑器
+			this.isImageSelectorShow = true;
+		},
 		onImageSelected() {
+			// 判断当前的操作对象
+			// 如果是文章就插入到文章
+			// 如果是封面就插入到封面
+
+			// 从数组里拿当前选中的对象
+			let item = this.images[this.selectedImageIndex];
+			if (this.imageSelectFor === 'article') {
+				this.$refs.mdEditor.toolbar_left_addlink('no-link',
+					item.name,
+					this.blog_constant.baseUrl + '/portal/image/' + item.url)
+			} else if (this.imageSelectFor === 'cover') {
+				// console.log(this.selectedImageIndex);
+				// console.log(item);
+				this.article.cover = item.url;
+			}
 			this.isImageSelectorShow = false;
-			console.log(this.selectedImageUrl);
 		},
 		showImageSelector() {
+			this.imageSelectFor = "cover";
+			// 显示图片编辑器
 			this.isImageSelectorShow = true;
 		},
 		htmlCode(status, value) {
@@ -232,7 +339,8 @@ export default {
 				}
 			});
 		},
-	},
+	}
+	,
 	mounted() {
 		// 获取文章分类
 		this.listCategories();
@@ -281,6 +389,11 @@ export default {
     line-height: 140px;
     color: #E5E5E5;
     font-size: 20px;
+}
+
+.article-cover-selector img {
+    width: 200px;
+    height: 140px;
 }
 
 .article-cover-selector {

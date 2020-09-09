@@ -7,8 +7,8 @@ import leftMenu from './layout/left-menu'
 import topHeader from './layout/top-header'
 import * as api from "@/api/api";
 import constants from "@/utils/constants";
-import mavonEditor from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
+// import mavonEditor from 'mavon-editor'
+// import 'mavon-editor/dist/css/index.css'
 
 Vue.config.productionTip = false
 Vue.prototype.blog_constant = constants;
@@ -16,7 +16,7 @@ Vue.prototype.blog_constant = constants;
 Vue.component('leftMenu', leftMenu);
 Vue.component('topHeader', topHeader);
 Vue.use(ElementUI);
-Vue.use(mavonEditor);
+// Vue.use(mavonEditor);
 
 router.beforeEach((to, from, next) => {
 	// 如果是登录页面，则需要放行

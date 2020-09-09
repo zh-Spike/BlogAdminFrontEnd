@@ -110,3 +110,16 @@ export const deleteFriendLink = (linkId) => {
 export const listImages = (page, size, original) => {
 	return http.requestGet('/admin/image/list/' + page + '/' + size + '?origin=' + original);
 };
+// 发表文章
+export const postArticle = (article) => {
+	return http.requestPost('/admin/article', article);
+};
+// 保存草稿
+export const saveArticleDraft = (article) => {
+	return http.requestPost('/admin/article', article);
+};
+// 获取文章列表
+export const listArticle = (page, size, state, keyword, categoryId) => {
+	return http.requestGet('/admin/article/list/' + page + '/' + size + '?state=' + size + '&categoryId=' +
+		categoryId + '&keyword=' + keyword);
+};
