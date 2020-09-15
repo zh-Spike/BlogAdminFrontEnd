@@ -1,9 +1,35 @@
 <template>
     <div class="article-list-box">
         <div class="article-action-bar">
-
+            <!--文章发表、搜索-->
+            <el-form :inline="true" size="medium">
+                <el-form-item>
+                    <el-input v-model="search.keyword" placeholder="请输入标题关键字"></el-input>
+                </el-form-item>
+                <el-form-item label="活动区域">
+                    <el-select v-model="search.state" placeholder="请输入状态">
+                        <el-option label="已删除" value="0"></el-option>
+                        <el-option label="已发布" value="1"></el-option>
+                        <el-option label="草稿" value="2"></el-option>
+                        <el-option label="置顶" value="3"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select v-model="search.categoryId" placeholder="请选择分类">
+                        <el-option
+                                v-for="item in categories"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="doArticleSearch">查询</el-button>
+                    <el-button type="danger" @click="cleanSearch">清除</el-button>
+                </el-form-item>
+            </el-form>
         </div>
-
         <div class="article-list-part">
             <el-table
                     v-loading="loading"
@@ -30,13 +56,16 @@
                         width="100">
                     <template slot-scope="scope">
                         <div v-if="scope.row.state === '0'">
-                            <el-tag type="danger">已删除</el-tag>
+                            <el-tag type="danger" size="medium">已删除</el-tag>
                         </div>
                         <div v-if="scope.row.state === '1'">
-                            <el-tag type="success">正 常</el-tag>
+                            <el-tag type="success" size="medium">已发布</el-tag>
                         </div>
                         <div v-if="scope.row.state === '2'">
-                            <el-tag type="warning">草 稿</el-tag>
+                            <el-tag type="warning" size="medium">草 稿</el-tag>
+                        </div>
+                        <div v-if="scope.row.state === '3'">
+                            <el-tag type="success" size="medium">置 顶</el-tag>
                         </div>
                     </template>
                 </el-table-column>
@@ -95,16 +124,38 @@ export default {
 		return {
 			loading: false,
 			articles: [],
-
+			search: {
+				keyword: '',
+				state: '',
+				categoryId: ''
+			},
+			categories: []
 		}
 	},
 	methods: {
+		listCategories() {
+			api.listCategories().then(result => {
+				if (result.code === api.success_code) {
+					this.categories = result.data;
+				}
+			});
+		},
+		cleanSearch() {
+			this.search.categoryId = '';
+			this.search.state = '';
+			this.search.keyword = '';
+			this.listCategories();
+		},
+		doArticleSearch() {
+			this.listCategories();
+		},
 		formatDate(dateStr) {
 			let date = new Date(dateStr);
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
 		},
-		listArticle() {
-			api.listArticle(1,10,'','','').then(result => {
+		listArticles() {
+			api.listArticle(1, 10, this.search.state, this.search.keyword,
+				this.search.categoryId).then(result => {
 				if (result.code === api.success_code) {
 					this.articles = result.data.contents;
 				}
@@ -112,7 +163,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.listArticle();
+		this.listArticles();
+		this.listCategories();
 	}
 }
 </script>
