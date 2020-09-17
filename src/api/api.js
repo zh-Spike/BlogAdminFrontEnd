@@ -118,8 +118,14 @@ export const postArticle = (article) => {
 export const saveArticleDraft = (article) => {
 	return http.requestPost('/admin/article', article);
 };
+// 文章置顶
+export const topArticle = (articleId) => {
+	return http.requestPut('/admin/article/top/' + articleId);
+};
 // 获取文章列表
-export const listArticle = (page, size, state, keyword, categoryId) => {
-	return http.requestGet('/admin/article/list/' + page + '/' + size + '?state=' + size + '&categoryId=' +
-		categoryId + '&keyword=' + keyword);
+export const listArticle = (page, size, categoryId, keyword, state) => {
+	let targetUrl = '/admin/article/list/' + page + '/' + size + '?categoryId=' + categoryId + '&keyword=' +
+		keyword + '&state=' + state;
+	console.log(targetUrl);
+	return http.requestGet(targetUrl);
 };

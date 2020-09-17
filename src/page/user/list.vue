@@ -248,7 +248,7 @@ export default {
 			if (result.code === api.success_code) {
 				this.userList = result.data.content;
 				this.pageNavigation.currentPage = result.data.number + 1;
-				this.pageNavigation.totalCount = result.data.totalElements;
+				this.pageNavigation.totalCount = result.data.count;
 				this.pageNavigation.pageSize = result.data.size;
 			} else {
 				this.$message.error(result.message);

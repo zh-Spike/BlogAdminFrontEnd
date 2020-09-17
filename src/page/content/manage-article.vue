@@ -6,12 +6,13 @@
                 <el-form-item>
                     <el-input v-model="search.keyword" placeholder="请输入标题关键字"></el-input>
                 </el-form-item>
-                <el-form-item label="活动区域">
-                    <el-select v-model="search.state" placeholder="请输入状态">
+                <el-form-item>
+                    <el-select v-model="search.state" placeholder="请选择状态">
                         <el-option label="已删除" value="0"></el-option>
                         <el-option label="已发布" value="1"></el-option>
                         <el-option label="草稿" value="2"></el-option>
                         <el-option label="置顶" value="3"></el-option>
+                        <el-option label="所有状态" value=""></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -30,7 +31,7 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="article-list-part">
+        <div class="article-list-part margin-bottom-20">
             <el-table
                     v-loading="loading"
                     :data="articles"
@@ -59,10 +60,10 @@
                             <el-tag type="danger" size="medium">已删除</el-tag>
                         </div>
                         <div v-if="scope.row.state === '1'">
-                            <el-tag type="success" size="medium">已发布</el-tag>
+                            <el-tag type="primary" size="medium">已发布</el-tag>
                         </div>
                         <div v-if="scope.row.state === '2'">
-                            <el-tag type="warning" size="medium">草 稿</el-tag>
+                            <el-tag type="info" size="medium">草 稿</el-tag>
                         </div>
                         <div v-if="scope.row.state === '3'">
                             <el-tag type="success" size="medium">置 顶</el-tag>
@@ -92,21 +93,33 @@
                 <el-table-column
                         fixed="right"
                         label="操作"
-                        width="200">
+                        width="250">
                     <template slot-scope="scope">
-                        <el-button type="primary" size="medium" @click="edit(scope.row)">编辑</el-button>
-                        <el-button type="danger" v-if="scope.row.state !== '0'" size="medium"
+                        <el-button type="primary" size="mini" @click="edit(scope.row)">编辑</el-button>
+                        <el-button type="info" size="mini" v-if="scope.row.state==='3'"
+                                   @click="top(scope.row)">取消置顶
+                        </el-button>
+                        <el-button type="success" v-else size="mini" @click="top(scope.row)">置顶</el-button>
+                        <el-button type="danger" v-if="scope.row.state !== '0'" size="mini"
                                    @click="deleteItem(scope.row)">删除
                         </el-button>
-                        <el-button type="danger" v-if="scope.row.state === '0'" size="medium"
+                        <el-button type="danger" v-if="scope.row.state === '0'" size="mini"
                                    @click="deleteItem(scope.row)" disabled>删除
                         </el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
-        <div class="article-page-navigation">
-
+        <div class="article-page-navigation margin-bottom-20">
+            <el-pagination
+                    class="article-list-page-navigation-bar"
+                    background
+                    @current-change="onPageChange"
+                    :current-page="pageNavigation.currentPage"
+                    :page-size="pageNavigation.pageSize"
+                    layout="prev, pager, next"
+                    :total="pageNavigation.totalCount">
+            </el-pagination>
         </div>
         <div class="article-dialog-part">
 
@@ -126,38 +139,75 @@ export default {
 			articles: [],
 			search: {
 				keyword: '',
-				state: '',
-				categoryId: ''
+				categoryId: '',
+				state: ''
 			},
-			categories: []
+			categories: [],
+			pageNavigation: {
+				currentPage: 1,
+				totalCount: 0,
+				pageSize: 10,
+			},
 		}
 	},
 	methods: {
+		top(item) {
+			api.topArticle(item.id).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					this.listArticles();
+				} else {
+					this.$message.error(result.message);
+				}
+			})
+		},
+		onPageChange(page) {
+			this.pageNavigation.currentPage = page;
+			this.listArticles();
+		},
 		listCategories() {
 			api.listCategories().then(result => {
 				if (result.code === api.success_code) {
 					this.categories = result.data;
+					this.categories.push({
+						id: '',
+						name: '所有分类'
+					})
 				}
 			});
 		},
 		cleanSearch() {
+			this.pageNavigation.currentPage = 1;
+			this.pageNavigation.pageSize = 10;
 			this.search.categoryId = '';
 			this.search.state = '';
 			this.search.keyword = '';
-			this.listCategories();
+			this.listArticles();
 		},
 		doArticleSearch() {
-			this.listCategories();
+			this.pageNavigation.currentPage = 1;
+			this.pageNavigation.pageSize = 10;
+			console.log('do article search...')
+			this.listArticles();
 		},
 		formatDate(dateStr) {
 			let date = new Date(dateStr);
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
 		},
 		listArticles() {
-			api.listArticle(1, 10, this.search.state, this.search.keyword,
-				this.search.categoryId).then(result => {
+			api.listArticle(this.pageNavigation.currentPage,
+				this.pageNavigation.pageSize,
+				this.search.categoryId,
+				this.search.keyword,
+				this.search.state).then(result => {
+				console.log(result);
 				if (result.code === api.success_code) {
 					this.articles = result.data.contents;
+					this.pageNavigation.currentPage = result.data.currentPage;
+					this.pageNavigation.totalCount = result.data.totalCount;
+					this.pageNavigation.pageSize = result.data.pageSize;
+				} else {
+					this.$message.error(result.message);
 				}
 			});
 		},
@@ -170,4 +220,7 @@ export default {
 </script>
 
 <style>
+.article-list-box {
+    padding: 10px;
+}
 </style>
