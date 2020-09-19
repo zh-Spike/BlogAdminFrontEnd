@@ -129,3 +129,19 @@ export const listArticle = (page, size, categoryId, keyword, state) => {
 	console.log(targetUrl);
 	return http.requestGet(targetUrl);
 };
+// 真实删除
+export const deleteArticleAbs = (articleId) => {
+	return http.requestDelete('/admin/article/' + articleId);
+};
+// 状态删除
+export const deleteArticleState = (articleId) => {
+	return http.requestDelete('/admin/article/state/' + articleId);
+};
+// 获取文章详情
+export const getArticleDetail = (articleId) => {
+	return http.requestGet('/admin/article/' + articleId);
+};
+// 更新文章
+export const updateArticle = (articleId, article) => {
+	return http.requestPut('/admin/article/' + articleId, article);
+};

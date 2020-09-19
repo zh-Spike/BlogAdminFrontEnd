@@ -96,16 +96,16 @@
                         width="250">
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" @click="edit(scope.row)">编辑</el-button>
-                        <el-button type="info" size="mini" v-if="scope.row.state==='3'"
-                                   @click="top(scope.row)">取消置顶
-                        </el-button>
-                        <el-button type="success" v-else size="mini" @click="top(scope.row)">置顶</el-button>
                         <el-button type="danger" v-if="scope.row.state !== '0'" size="mini"
                                    @click="deleteItem(scope.row)">删除
                         </el-button>
                         <el-button type="danger" v-if="scope.row.state === '0'" size="mini"
                                    @click="deleteItem(scope.row)" disabled>删除
                         </el-button>
+                        <el-button type="info" size="mini" v-if="scope.row.state==='3'"
+                                   @click="top(scope.row)">取消置顶
+                        </el-button>
+                        <el-button type="success" v-else size="mini" @click="top(scope.row)">置顶</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -122,9 +122,19 @@
             </el-pagination>
         </div>
         <div class="article-dialog-part">
-
+            <el-dialog
+                    :close-on-press-escape="false"
+                    :close-on-click-modal="false"
+                    title="删除提示"
+                    :visible.sync="deleteDialogShow"
+                    width="500px">
+                <span>你确定要删除: {{ deleteMessage }} 这篇文章吗？</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="medium" type="primary" @click="doDeleteItem">状态删除</el-button>
+                    <el-button size="medium" type="danger" @click="doAbsDelete">绝对删除</el-button>
+				</span>
+            </el-dialog>
         </div>
-
     </div>
 </template>
 
@@ -135,6 +145,8 @@ import * as api from "@/api/api";
 export default {
 	data() {
 		return {
+			deleteMessage: '',
+			deleteDialogShow: false,
 			loading: false,
 			articles: [],
 			search: {
@@ -148,9 +160,46 @@ export default {
 				totalCount: 0,
 				pageSize: 10,
 			},
+			targetDeleteArticleId: '',
 		}
 	},
 	methods: {
+		edit(item) {
+			let articleId = item.id;
+			this.$router.push({
+				path: '/content/post-article',
+				query: {
+					articleId: articleId
+				}
+			});
+		},
+		doAbsDelete() {
+			api.deleteArticleAbs(this.targetDeleteArticleId).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					this.deleteDialogShow = false;
+					this.listArticles();
+				} else {
+					this.$message.error(result.message);
+				}
+			});
+		},
+		doDeleteItem() {
+			api.deleteArticleState(this.targetDeleteArticleId).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					this.deleteDialogShow = false;
+					this.listArticles();
+				} else {
+					this.$message.error(result.message);
+				}
+			});
+		},
+		deleteItem(item) {
+			this.targetDeleteArticleId = item.id;
+			this.deleteMessage = item.title;
+			this.deleteDialogShow = true;
+		},
 		top(item) {
 			api.topArticle(item.id).then(result => {
 				if (result.code === api.success_code) {

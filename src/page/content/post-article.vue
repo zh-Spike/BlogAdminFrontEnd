@@ -44,7 +44,7 @@
                     </el-form-item>
                     <el-form-item label="封面" required>
                         <div class="article-cover-selector" @click="showImageSelector">
-                            <i class="el-icon-plus" v-if="article.cover===''"></i>
+                            <i class="el-icon-plus" v-if=!article.cover></i>
                             <el-image fit="cover" v-else
                                       :src="blog_constant.baseUrl+'/portal/image/'+article.cover"></el-image>
                         </div>
@@ -78,13 +78,15 @@
             <div class="article-post-action-bar clear-fix">
                 <div class="action-btn-container">
                     <el-button size="medium" plain @click="preView">全屏预览</el-button>
-                    <el-button size="medium" plain @click="saveArticleDraft">保存草稿</el-button>
-                    <el-button size="medium" type="primary" @click="commitArticle">发表文章</el-button>
+                    <el-button size="medium" plain @click="saveArticleDraft" v-if="!disableDraftBtn">保存草稿</el-button>
+                    <el-button size="medium" plain @click="saveArticleDraft" v-else disabled>保存草稿</el-button>
+                    <el-button size="medium" type="primary" @click="commitArticle">{{ commitText }}</el-button>
                 </div>
             </div>
         </div>
         <div class="article-post-dialog-box">
             <el-dialog
+                    class="image-picker-container"
                     title="图片选择"
                     :visible.sync="isImageSelectorShow"
                     width="500">
@@ -126,6 +128,17 @@
                         <el-button type="primary" @click="onImageSelected" size="medium">确 定</el-button>
                 </span>
             </el-dialog>
+            <el-dialog
+                    title="确定要离开吗?"
+                    :visible.sync="saveConfirmDialogShow"
+                    width="500px"
+                    center>
+                <span>系统可能不会保存填写的文章信息噢...(`;Ω;`)</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="medium" @click="saveConfirmDialogShow=false">取消</el-button>
+                    <el-button size="medium" type="primary" @click="toNextPage">确定</el-button>
+                </span>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -135,13 +148,15 @@ import * as api from '@/api/api';
 import editor from '../../../lib/mavon-editor/mavon-editor';
 import '../../../lib/mavon-editor/css/index.css';
 import Vue from 'vue';
+// import article from "@/components/article";
 
 Vue.use(editor);
 
 export default {
 	data() {
 		return {
-			imageSelectFor: '',
+			saveConfirmDialogShow: false,
+			imageSelectFor: 'article',
 			pageNavigation: {
 				currentPage: 1,
 				totalCount: 0,
@@ -155,6 +170,7 @@ export default {
 			labels: ['java', 'vue.js'],
 			categories: [],
 			article: {
+				id: '',
 				title: '',
 				content: '',
 				categoryId: '',
@@ -163,11 +179,24 @@ export default {
 				label: '',
 				state: '1',
 				type: '1',
+				createTime: null,
+
 			},
 			images: [],
+			commitText: '发表文章',
+			disableDraftBtn: false,
+			isContentSave: false,
+			nextPath: ''
 		}
 	},
 	methods: {
+		toNextPage() {
+			this.saveConfirmDialogShow=true;
+			this.isContentSave = true;
+			this.$router.push({
+				path: this.nextPath
+			})
+		},
 		preView() {
 			this.$refs.mdEditor.toolbar_right_click('read');
 		},
@@ -182,6 +211,8 @@ export default {
 			// 提交数据
 			api.saveArticleDraft(this.article).then(result => {
 				if (result.code === api.success_code) {
+					this.isContentSave = true;
+					window.onbeforeunload = null;
 					this.$message.success(result.message);
 					// 跳转到文章列表页面
 					this.$router.push({
@@ -228,18 +259,39 @@ export default {
 			});
 			this.article.label = tempLabels;
 			console.log('label ==> ' + this.article.label);
-			// 提交数据
-			api.postArticle(this.article).then(result => {
-				if (result.code === api.success_code) {
-					this.$message.success(result.message);
-					// 跳转到文章列表页面
-					this.$router.push({
-						path: '/content/manager-article'
-					})
-				} else {
-					this.$message.error(result.message);
+			// 到底是更新还是发布
+			// 判断articleId是否存在 如果存在，文章更新 否则就是发布
+			if (this.article.id === '') {
+				// 提交数据
+				api.postArticle(this.article).then(result => {
+					if (result.code === api.success_code) {
+						window.onbeforeunload = null;
+						this.$message.success(result.message);
+						// 跳转到文章列表页面
+						this.$router.push({
+							path: '/content/manage-article'
+						})
+					} else {
+						this.$message.error(result.message);
+					}
+				});
+			} else {
+				if (this.article.state === '0') {
+					this.article.state = '1';
 				}
-			});
+				// 更新文章
+				api.updateArticle(this.article.id, this.article).then(result => {
+					if (result.code === api.success_code) {
+						this.$message.success(result.message);
+						// 跳转到文章列表页面
+						this.$router.push({
+							path: '/content/manage-article'
+						})
+					} else {
+						this.$message.error(result.message);
+					}
+				})
+			}
 		},
 		onPageChange(page) {
 			this.pageNavigation.currentPage = page;
@@ -264,7 +316,6 @@ export default {
 			// 判断当前的操作对象
 			// 如果是文章就插入到文章
 			// 如果是封面就插入到封面
-
 			// 从数组里拿当前选中的对象
 			let item = this.images[this.selectedImageIndex];
 			if (this.imageSelectFor === 'article') {
@@ -339,15 +390,65 @@ export default {
 				}
 			});
 		},
-	}
-	,
+		getArticleDetail(articleId) {
+			api.getArticleDetail(articleId).then(result => {
+				if (result.code === api.success_code) {
+					let remoteArticle = result.data;
+					this.article.id = remoteArticle.id;
+					this.article.title = remoteArticle.title;
+					this.article.content = remoteArticle.content;
+					this.article.categoryId = remoteArticle.categoryId;
+					this.article.summary = remoteArticle.summary;
+					this.article.cover = remoteArticle.cover;
+					this.article.label = remoteArticle.label;
+					this.article.state = remoteArticle.state;
+					this.article.type = remoteArticle.type;
+					this.labels = remoteArticle.labels;
+					this.article.createTime = remoteArticle.createTime;
+					// 如果当前文章状态是草稿 按钮显示是发布文章
+					// 如果文章已发布: 发布/置顶/删除 则按钮显示为更新
+					if (this.article.state === '2') {
+						this.commitText = '发表文章';
+						// 草稿就应该禁用该按钮
+						this.disableDraftBtn = false;
+					} else {
+						this.commitText = '更新文章';
+						this.disableDraftBtn = true;
+					}
+				}
+			})
+		}
+	},
+	beforeDestroy() {
+		console.log('before destory...');
+		window.onbeforeunload = null;
+	},
 	mounted() {
+		window.onbeforeunload = function () {
+			return '系统可能不会保存已填写的稿件信息噢';
+		}
+		// 是否要获取文章详情
+		let articleId = this.$route.query.articleId;
+		if (articleId) {
+			console.log(articleId);
+			// 获取文章详情
+			this.getArticleDetail(articleId);
+		}
 		// 获取文章分类
 		this.listCategories();
 		this.listImages();
+	},
+	beforeRouteLeave(to, from, next) {
+		if (this.isContentSave) {
+			next();
+		} else {
+			this.nextPath = to.path;
+			// console.log(to);
+			// console.log(from);
+			// 做一个弹窗 如果确定才跳转
+			this.saveConfirmDialogShow = true;
+		}
 	}
-
-
 }
 </script>
 
@@ -367,7 +468,7 @@ export default {
     float: left;
 }
 
-.article-post-dialog-box .el-dialog__header {
+.image-picker-container .el-dialog__header {
     display: none;
 }
 
