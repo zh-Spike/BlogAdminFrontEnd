@@ -226,7 +226,7 @@ export default {
 			if (response.code === api.success_code) {
 				// 上传成功
 				// 回显图片
-				this.loop.imageUrl = this.blog_constant.baseUrl + '/portal/image/' + response.data.id;
+				this.loop.imageUrl = this.blog_constant.imageBaseUrl + response.data.id;
 				this.$message.success(response.message);
 			} else {
 				this.$message.error(response.message);

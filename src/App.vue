@@ -15,6 +15,10 @@ export default {
     min-width: 1140px;
 }
 
+a {
+    text-decoration: none;
+}
+
 * {
     padding: 0;
     margin: 0;

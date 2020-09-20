@@ -46,7 +46,7 @@
                         <div class="article-cover-selector" @click="showImageSelector">
                             <i class="el-icon-plus" v-if=!article.cover></i>
                             <el-image fit="cover" v-else
-                                      :src="blog_constant.baseUrl+'/portal/image/'+article.cover"></el-image>
+                                      :src="blog_constant.imageBaseUrl+article.cover"></el-image>
                         </div>
                     </el-form-item>
                     <el-form-item label="标签" class="label-input-box" required>
@@ -69,9 +69,7 @@
                         <el-button v-if="!labelInputVisible && !isEnough" class="button-new-tag" size="small"
                                    @click="showLabelInput"> + 添加标签
                         </el-button>
-
                     </el-form-item>
-
                 </el-form>
             </div>
             <!--发布/草稿/预览按钮-->
@@ -106,7 +104,7 @@
                         <el-radio-group v-model="selectedImageIndex">
                             <el-radio-button v-for="(item,index) in images" :key="index" :label="index">
                                 <el-image fit="cover"
-                                          :src="blog_constant.baseUrl+'/portal/image/'+item.url">
+                                          :src="blog_constant.imageBaseUrl+item.url">
                                 </el-image>
                             </el-radio-button>
                         </el-radio-group>
@@ -191,7 +189,7 @@ export default {
 	},
 	methods: {
 		toNextPage() {
-			this.saveConfirmDialogShow=true;
+			this.saveConfirmDialogShow = true;
 			this.isContentSave = true;
 			this.$router.push({
 				path: this.nextPath
@@ -321,7 +319,7 @@ export default {
 			if (this.imageSelectFor === 'article') {
 				this.$refs.mdEditor.toolbar_left_addlink('no-link',
 					item.name,
-					this.blog_constant.baseUrl + '/portal/image/' + item.url)
+					this.blog_constant.imageBaseUrl + item.url)
 			} else if (this.imageSelectFor === 'cover') {
 				// console.log(this.selectedImageIndex);
 				// console.log(item);

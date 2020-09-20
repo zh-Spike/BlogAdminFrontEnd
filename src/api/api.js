@@ -145,3 +145,15 @@ export const getArticleDetail = (articleId) => {
 export const updateArticle = (articleId, article) => {
 	return http.requestPut('/admin/article/' + articleId, article);
 };
+// 获取评论列表
+export const listComments = (page, size) => {
+	return http.requestGet('/admin/comment/list/' + page + '/' + size);
+};
+// 删除评论
+export const deleteCommentById = (commentId) => {
+	return http.requestDelete('/admin/comment/' + commentId);
+};
+// 置顶评论
+export const topComment = (commentId) => {
+	return http.requestPut('/admin/comment/top/' + commentId);
+};
