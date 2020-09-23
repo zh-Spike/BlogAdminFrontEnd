@@ -184,11 +184,21 @@ export default {
 			commitText: '发表文章',
 			disableDraftBtn: false,
 			isContentSave: false,
-			nextPath: ''
+			nextPath: '',
+			hasContentChange: false
+		}
+	},
+	watch: {
+		article: {
+			handler() {
+				this.hasContentChange = true;
+			},
+			deep: true,
 		}
 	},
 	methods: {
 		toNextPage() {
+			this.hasContentChange = true;
 			this.saveConfirmDialogShow = true;
 			this.isContentSave = true;
 			this.$router.push({
@@ -264,6 +274,7 @@ export default {
 				api.postArticle(this.article).then(result => {
 					if (result.code === api.success_code) {
 						window.onbeforeunload = null;
+						this.isContentSave = true;
 						this.$message.success(result.message);
 						// 跳转到文章列表页面
 						this.$router.push({
@@ -274,12 +285,13 @@ export default {
 					}
 				});
 			} else {
-				if (this.article.state === '0') {
+				if (this.article.state === '0' || this.article.state === '2') {
 					this.article.state = '1';
 				}
 				// 更新文章
 				api.updateArticle(this.article.id, this.article).then(result => {
 					if (result.code === api.success_code) {
+						this.isContentSave = true;
 						this.$message.success(result.message);
 						// 跳转到文章列表页面
 						this.$router.push({
@@ -437,7 +449,7 @@ export default {
 		this.listImages();
 	},
 	beforeRouteLeave(to, from, next) {
-		if (this.isContentSave) {
+		if (this.isContentSave || !this.hasContentChange) {
 			next();
 		} else {
 			this.nextPath = to.path;

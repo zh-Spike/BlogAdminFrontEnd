@@ -23,7 +23,7 @@
                         width="200"
                         label="logo">
                     <template slot-scope="scope">
-                        <el-image fit="cover" :src="blog_constant.baseUrl+scope.row.logo"
+                        <el-image fit="cover" :src="blog_constant.imageBaseUrl+scope.row.logo"
                                   class="friend-link-image"></el-image>
                     </template>
                 </el-table-column>
@@ -99,7 +99,7 @@
                         <el-form-item label="logo">
                             <div class="friend-link-image-upload" @click="showLinkLogoDialog">
                                 <i class="el-icon-plus" v-if="link.logo===''"></i>
-                                <el-image v-else :src="blog_constant.baseUrl+link.logo"></el-image>
+                                <el-image v-else :src="blog_constant.imageBaseUrl+link.logo"></el-image>
                             </div>
                         </el-form-item>
                     </el-form>
@@ -187,7 +187,7 @@ export default {
 			if (response.code === api.success_code) {
 				// 上传成功
 				this.$message.success(response.message);
-				this.link.logo = '/portal/image/' + response.data.id;
+				this.link.logo = response.data.id;
 			} else {
 				this.$message.error(response.message);
 			}

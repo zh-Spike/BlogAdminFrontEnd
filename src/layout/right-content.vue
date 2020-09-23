@@ -11,6 +11,10 @@
 export default {}
 </script>
 <style>
+.right-content-container {
+    min-width: 1140px;
+}
+
 .content-container-box {
 }
 

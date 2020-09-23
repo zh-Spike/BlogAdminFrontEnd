@@ -108,7 +108,7 @@ export const deleteFriendLink = (linkId) => {
 };
 // 获取图片列表
 export const listImages = (page, size, original) => {
-	return http.requestGet('/admin/image/list/' + page + '/' + size + '?origin=' + original);
+	return http.requestGet('/admin/image/list/' + page + '/' + size + '?original=' + original);
 };
 // 发表文章
 export const postArticle = (article) => {
@@ -156,4 +156,8 @@ export const deleteCommentById = (commentId) => {
 // 置顶评论
 export const topComment = (commentId) => {
 	return http.requestPut('/admin/comment/top/' + commentId);
+};
+// 删除图片
+export const deleteImageById = (imageId) => {
+	return http.requestDelete('/admin/image/' + imageId);
 };

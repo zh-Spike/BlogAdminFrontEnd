@@ -53,6 +53,16 @@
                         width="100">
                 </el-table-column>
                 <el-table-column
+                        label="用户"
+                        width="300">
+                    <template slot-scope="scope">
+                        <a href="#" class="article-user-avatar clearfix">
+                            <el-avatar :src="scope.row.userAvatar"></el-avatar>
+                            <span class="article-user-name">{{ scope.row.userName }}</span>
+                        </a>
+                    </template>
+                </el-table-column>
+                <el-table-column
                         label="状态"
                         width="100">
                     <template slot-scope="scope">
@@ -236,7 +246,7 @@ export default {
 		doArticleSearch() {
 			this.pageNavigation.currentPage = 1;
 			this.pageNavigation.pageSize = 10;
-			console.log('do article search...')
+			// console.log('do article search...')
 			this.listArticles();
 		},
 		formatDate(dateStr) {
@@ -244,20 +254,20 @@ export default {
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
 		},
 		listArticles() {
+			this.loading = true;
 			api.listArticle(this.pageNavigation.currentPage,
 				this.pageNavigation.pageSize,
 				this.search.categoryId,
 				this.search.keyword,
 				this.search.state).then(result => {
-				console.log(result);
+				// console.log(result);
 				if (result.code === api.success_code) {
 					this.articles = result.data.contents;
 					this.pageNavigation.currentPage = result.data.currentPage;
 					this.pageNavigation.totalCount = result.data.totalCount;
 					this.pageNavigation.pageSize = result.data.pageSize;
-				} else {
-					this.$message.error(result.message);
 				}
+				this.loading = false;
 			});
 		},
 	},
@@ -269,6 +279,26 @@ export default {
 </script>
 
 <style>
+.article-user-name {
+    margin-left: 10px;
+    font-weight: 600;
+    color: #222222;
+}
+
+.article-user-avatar {
+    display: block;
+}
+
+.article-user-avatar img {
+    vertical-align: middle;
+}
+
+.article-user-avatar span {
+    display: block;
+    line-height: 40px;
+    float: left;
+}
+
 .article-list-box {
     padding: 10px;
 }

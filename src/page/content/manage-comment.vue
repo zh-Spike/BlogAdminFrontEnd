@@ -164,6 +164,7 @@ export default {
 			this.listComments();
 		},
 		listComments() {
+			this.loading = true;
 			api.listComments(this.pageNavigation.currentPage, this.pageNavigation.pageSize).then(result => {
 				if (result.code === api.success_code) {
 					this.comments = result.data.content;
@@ -171,6 +172,7 @@ export default {
 					this.pageNavigation.totalCount = result.data.totalElements;
 					this.pageNavigation.pageSize = result.data.size;
 				}
+				this.loading = false;
 			});
 		},
 		formatDate(dateStr) {
