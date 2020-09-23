@@ -161,3 +161,23 @@ export const topComment = (commentId) => {
 export const deleteImageById = (imageId) => {
 	return http.requestDelete('/admin/image/' + imageId);
 };
+// 获取文章总数
+export const getArticleCount = () => {
+	return http.requestGet('/admin/article/count');
+};
+// 获取评论总数
+export const getCommentCount = () => {
+	return http.requestGet('/admin/comment/count');
+};
+// 获取用户总数
+export const getUserCount = () => {
+	return http.requestGet('/user/register_count');
+};
+// 获取访问量总数
+export const getViewCount = () => {
+	return http.requestGet('/admin/web_site_info/view_count');
+};
+// 退出登录
+export const doLogout = () => {
+	return http.requestGet('/user/logout');
+};

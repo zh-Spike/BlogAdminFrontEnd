@@ -11,6 +11,14 @@ export default {
 </script>
 
 <style>
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
 #app {
     min-width: 1140px;
 }

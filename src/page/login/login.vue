@@ -19,7 +19,7 @@
                                 <el-input v-model="user.userName" placeholder="用户名/邮箱"></el-input>
                             </el-form-item>
                             <el-form-item label="密码" required>
-                                <el-input type="password" v-model="user.password" placeholder="密码"></el-input>
+                                <el-input type="password" v-model="originalPassword" placeholder="密码"></el-input>
                             </el-form-item>
                             <el-form-item label="验证码" required>
                                 <el-input v-model="loginInfo.verifyCode" placeholder="请输入右侧验证码"
@@ -40,10 +40,12 @@
 
 <script>
 import * as api from "@/api/api";
+import {hex_md5} from "@/utils/md5";
 
 export default {
 	data() {
 		return {
+			originalPassword: '',
 			user: {
 				userName: '',
 				password: ''
@@ -70,14 +72,15 @@ export default {
 				this.toastE('账号不能为空');
 				return;
 			}
-			if (this.user.userName === '') {
-				this.toastE('账号不能为空');
+			if (this.originalPassword === '') {
+				this.toastE('密码不能为空');
 				return
 			}
 			if (this.loginInfo.verifyCode === '') {
 				this.toastE('验证码不能为空');
 				return;
 			}
+			this.user.password = hex_md5(this.originalPassword);
 			// 向服务器提交数据
 			api.doLogin(this.loginInfo.verifyCode, this.loginInfo.captcha_key, this.user).then(result => {
 				// 处理登陆结果
