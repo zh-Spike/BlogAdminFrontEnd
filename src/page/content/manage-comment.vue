@@ -13,7 +13,8 @@
                         width="200">
                 </el-table-column>
                 <el-table-column
-                        label="评论内容">
+                        label="评论内容"
+                        width="300">
                     <template slot-scope="scope">
                         <a href="#">{{ scope.row.content }}</a>
                     </template>
@@ -45,7 +46,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="createTime"
-                        label="创建日期">
+                        label="创建日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.createTime)">
 						</span>
@@ -53,7 +55,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="updateTime"
-                        label="更新日期">
+                        label="更新日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.updateTime)">
 						</span>

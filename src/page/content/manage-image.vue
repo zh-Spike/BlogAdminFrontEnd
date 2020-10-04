@@ -27,7 +27,7 @@
                         width="100">
                     <template slot-scope="scope">
                         <div v-if="scope.row.original === 'loop'">
-                            <el-tag type="success" size="medium">轮播与</el-tag>
+                            <el-tag type="success" size="medium">轮播图</el-tag>
                         </div>
                         <div v-if="scope.row.original === 'article'">
                             <el-tag type="primary" size="medium">文章</el-tag>
@@ -51,7 +51,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="createTime"
-                        label="创建日期">
+                        label="创建日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.createTime)">
 						</span>
@@ -59,7 +60,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="updateTime"
-                        label="更新日期">
+                        label="更新日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.updateTime)">
 						</span>

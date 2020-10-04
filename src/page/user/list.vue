@@ -44,7 +44,7 @@
                 <el-table-column
                         prop="email"
                         label="用户邮箱"
-                        width="120">
+                        width="200">
                 </el-table-column>
                 <el-table-column
                         label="签名"
@@ -59,8 +59,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                        label="状态"
-                        width="200">
+                        label="状态">
                     <template slot-scope="scope">
                         <div v-if="scope.row.state === '0'">
                             <el-tag type="danger">不可用</el-tag>
@@ -72,7 +71,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="createTime"
-                        label="创建日期">
+                        label="创建日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.createTime)">
 						</span>
@@ -80,7 +80,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="updateTime"
-                        label="更新日期">
+                        label="更新日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.updateTime)">
 						</span>

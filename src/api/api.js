@@ -181,3 +181,12 @@ export const getViewCount = () => {
 export const doLogout = () => {
 	return http.requestGet('/user/logout');
 };
+// 获取签到列表
+export const listSigns = () => {
+	return http.requestGet('/admin/sign/list');
+};
+// 管理签到
+export const updateSign = (signId) => {
+	return http.requestPut('/admin/sign/' + signId);
+};
+

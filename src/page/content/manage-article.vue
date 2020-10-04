@@ -82,11 +82,13 @@
                 </el-table-column>
                 <el-table-column
                         prop="summary"
-                        label="摘要">
+                        label="摘要"
+                        width="200">
                 </el-table-column>
                 <el-table-column
                         prop="createTime"
-                        label="创建日期">
+                        label="创建日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.createTime)">
 						</span>
@@ -94,7 +96,8 @@
                 </el-table-column>
                 <el-table-column
                         prop="updateTime"
-                        label="更新日期">
+                        label="更新日期"
+                        width="200">
                     <template slot-scope="scope">
 						<span v-text="formatDate(scope.row.updateTime)">
 						</span>
