@@ -1,8 +1,5 @@
 <template>
     <div class="appointment-box">
-        <div class="appointment-action-bar margin-bottom-10">
-            <el-button type="primary" size="medium" @click="showAddAppointment">新增预约审批</el-button>
-        </div>
         <div class="appointment-list-box">
             <el-table
                     v-loading="loading"
@@ -54,7 +51,7 @@
                         label="开始时间"
                         width="200">
                     <template slot-scope="scope">
-						<span v-text="formatDate(scope.row.createTime)">
+						<span v-text="formatDate(scope.row.startTime)">
 						</span>
                     </template>
                 </el-table-column>
@@ -63,7 +60,7 @@
                         label="结束时间"
                         width="200">
                     <template slot-scope="scope">
-						<span v-text="formatDate(scope.row.updateTime)">
+						<span v-text="formatDate(scope.row.endTime)">
 						</span>
                     </template>
                 </el-table-column>
@@ -89,7 +86,6 @@
                         <el-button type="danger" v-if="scope.row.state === '0'" size="mini"
                                    @click="deleteItem(scope.row)" disabled>驳回
                         </el-button>
-
                     </template>
                 </el-table-column>
             </el-table>
@@ -126,26 +122,88 @@
                     :show-close="false"
                     :title="editTitle"
                     :visible.sync="editorDialogShow"
-                    width="500px">
+                    width="700px">
                 <div class="appointment-editor-box">
-                    <el-form label-width="80px">
-                        <el-form-item label="名称">
-                            <el-input v-model="lab.labName"></el-input>
-                        </el-form-item>
-                        <el-form-item label="容量">
-                            <el-input v-model="lab.labNumber"></el-input>
+                    <el-form label-width="100px">
+                        <el-table
+                                ref="singleTable"
+                                :data="labs"
+                                highlight-current-row
+                                @current-change="handleCurrentChange"
+                                style="width: 100%;
+                                padding-bottom: 20px">
+                            <el-table-column
+                                    property="id"
+                                    label="ID"
+                                    width="200">
+                            </el-table-column>
+                            <el-table-column
+                                    property="labName"
+                                    label="实验室名称"
+                                    width="150">
+                            </el-table-column>
+                            <el-table-column
+                                    property="labAvailable"
+                                    label="可用容量"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    property="state"
+                                    label="可用性">
+                                <template slot-scope="scope">
+                                    <div v-if="scope.row.state === '0'">
+                                        <el-tag type="danger">不可用</el-tag>
+                                    </div>
+                                    <div v-if="scope.row.state === '1'">
+                                        <el-tag type="success">正 常</el-tag>
+                                    </div>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div style="margin-top: 20px">
+                            <el-button @click="setCurrent()">取消选择</el-button>
+                        </div>
+                        <!--                        <el-form-item label="实验室ID">-->
+                        <!--                            <el-input v-model="appointment.labId" placeholder="输入实验室ID">{{ this.lab.id }}}-->
+                        <!--                            </el-input>-->
+                        <!--                        </el-form-item>-->
+                        <el-form-item label="预约人数">
+                            <el-input v-model="appointment.appointmentNumber"></el-input>
                         </el-form-item>
                         <el-form-item label="状态">
-                            <el-select v-model="lab.state" placeholder="选择状态">
-                                <el-option label="不可用" value="0"></el-option>
-                                <el-option label="正常" value="1"></el-option>
+                            <el-select v-model="appointment.state" placeholder="选择状态">
+                                <el-option label="驳回" value="0"></el-option>
+                                <el-option label="审批中" value="1"></el-option>
+                                <el-option label="通过" value="2"></el-option>
                             </el-select>
+                        </el-form-item>
+                        <el-form-item label="起始时间">
+                            <el-col :span="11">
+                                <el-date-picker type="date" placeholder="选择日期" v-model="appointment.startTime"
+                                                style="width: 100%;"></el-date-picker>
+                            </el-col>
+                            <el-col class="line" :span="2">-</el-col>
+                            <el-col :span="11">
+                                <el-time-picker placeholder="选择时间" v-model="appointment.startTime"
+                                                style="width: 100%;"></el-time-picker>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item label="结束时间">
+                            <el-col :span="11">
+                                <el-date-picker type="date" placeholder="选择日期" v-model="appointment.endTime"
+                                                style="width: 100%;"></el-date-picker>
+                            </el-col>
+                            <el-col class="line" :span="2">-</el-col>
+                            <el-col :span="11">
+                                <el-time-picker placeholder="选择时间" v-model="appointment.endTime"
+                                                style="width: 100%;"></el-time-picker>
+                            </el-col>
                         </el-form-item>
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
                     <el-button size="medium" type="danger" @click="onEditorClose">取 消</el-button>
-					<el-button size="medium" type="primary" @click="postLab">{{ editorCommitText }}</el-button>
+					<el-button size="medium" type="primary" @click="postAppointment">{{ editorCommitText }}</el-button>
 				</span>
             </el-dialog>
         </div>
@@ -164,14 +222,22 @@ export default {
 			editorDialogShow: false,
 			editTitle: '编辑信息',
 			appointments: [],
+			labs: [],
 			deleteDialogShow: false,
 			deleteMessage: '',
 			deleteTargetId: '',
 			lab: {
 				id: '',
 				labName: '',
-				labNumber: '',
-				state: '1'
+				state: ''
+			},
+			appointment: {
+				id: '',
+				labId: '',
+				appointmentNumber: '',
+				state: '1',
+				startTime: '',
+				endTime: ''
 			},
 			pageNavigation: {
 				currentPage: 1,
@@ -181,73 +247,74 @@ export default {
 		};
 	},
 	methods: {
-
+		setCurrent(row) {
+			this.$refs.singleTable.setCurrentRow(row);
+		},
+		handleCurrentChange(val) {
+			this.currentRow = val;
+			// console.log(this.lab);
+		},
 		onEditorClose() {
 			this.editorDialogShow = false;
 			this.resetLab();
 		},
-		postLab() {
+		postAppointment() {
 			// 检查内容
-			if (this.lab.labName === '') {
-				this.showWarning('名称不能为空');
+			if (this.appointment.labId === '') {
+				this.showWarning('实验室不能为空');
 				return;
 			}
-			if (this.lab.labNumber === '') {
+			if (this.appointment.appointmentNumber === '') {
 				this.showWarning('人数不能为空');
 				return;
 			}
-			// 提交数据
-			// 提示结果
-			// 刷新数据
-			// 如果有ID的就是更新
-			if (this.lab.id === '') {
-				// 如果没有ID的就是添加
-				api.postLab(this.lab).then(result => {
-					this.editorDialogShow = false;
-					if (result.code === api.success_code) {
-						this.$message({
-							message: '添加成功',
-							center: true,
-							type: 'success'
-						});
-						// 刷新列表
-						this.listLabs();
-						// 重置数据
-						this.resetLab();
-					} else {
-						this.showWarning(result.message);
-					}
-				});
-			} else {
-				api.updateLab(this.lab.id, this.lab).then(result => {
-					if (result.code === api.success_code) {
-						this.$message.success(result.message);
-						this.editorDialogShow = false;
-						this.listLabs();
-						this.resetLab();
-					} else {
-						this.$message.error(result.message);
-					}
-				})
+			if (this.appointment.startTime === '') {
+				this.showWarning('起始时间不能为空');
+				return;
 			}
-		},
+			if (this.appointment.endTime === '') {
+				this.showWarning('结束时间不能为空');
+				return;
+			}
+			if (this.appointment.endTime < this.appointment.startTime) {
+				this.showWarning('时间不要搞错┗|｀O′|┛ 嗷~~');
+				return;
+			}
+			// console.log(this.appointment);
+			api.updateAppointment(this.appointment.id, this.appointment).then(result => {
+				if (result.code === api.success_code) {
+					this.$message.success(result.message);
+					this.editorDialogShow = false;
+					this.listAppointments();
+					this.resetAppointment();
+				} else {
+					this.$message.error(result.message);
+				}
+			})
+		}
+		,
 		edit(item) {
 			// 赋值 先请求单个数据 再显示 数据回显
+			this.appointment.id = item.id;
 			// 显示dialog
-			this.lab.id = item.id;
-			this.lab.labName = item.labName;
-			this.lab.labNumber = item.labNumber;
-			this.lab.state = item.state;
+			// this.appointment.labId = item.labId;
+			this.appointment.appointmentNumber = item.appointmentNumber;
+			this.appointment.startTime = item.startTime;
+			this.appointment.endTime = item.endTime;
 			// console.log(item);
 			this.editorDialogShow = true;
 			this.editorCommitText = '修改信息';
-			this.editTitle = '编辑实验室';
-		},
-		resetLab() {
-			this.lab.labName = '';
-			this.lab.labNumber = '';
-			this.lab.state = '1';
-		},
+			this.editTitle = '编辑预约申请';
+		}
+		,
+		resetAppointment() {
+			this.appointment.labId = '';
+			this.appointment.appointmentNumber = '';
+			this.appointment.state = '1';
+			this.appointment.startTime = '';
+			this.appointment.endTime = '';
+		}
+		,
 		checkAppointment(item) {
 			api.checkAppointment(item.id).then(result => {
 				if (result.code === api.success_code) {
@@ -259,18 +326,21 @@ export default {
 					this.listAppointments();
 				}
 			})
-		},
+		}
+		,
 		deleteItem(item) {
 			// 不是马上删除 弹出确认方框
 			this.deleteDialogShow = true;
 			this.deleteMessage = item.userName;
 			this.deleteTargetId = item.id
 			// console.log(item);
-		},
+		}
+		,
 		formatDate(dateStr) {
 			let date = new Date(dateStr);
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		},
+		}
+		,
 		doDeleteItem() {
 			api.deleteAppointment(this.deleteTargetId).then(result => {
 				if (result.code === api.success_code) {
@@ -283,7 +353,8 @@ export default {
 				}
 			});
 			this.deleteDialogShow = false;
-		},
+		}
+		,
 		listAppointments() {
 			this.loading = true;
 			api.listAppointments(this.pageNavigation.currentPage, this.pageNavigation.pageSize).then(result => {
@@ -296,14 +367,28 @@ export default {
 					this.pageNavigation.pageSize = result.data.size;
 				}
 			});
-		},
+		}
+		,
+		listLabs() {
+			this.loading = true;
+			api.listLabs().then(result => {
+				this.loading = false;
+				//	console.log(result);
+				if (result.code === api.success_code) {
+					this.labs = result.data;
+				}
+			});
+		}
+		,
 		onPageChange(page) {
 			this.pageNavigation.currentPage = page;
 			this.listAppointments();
-		},
+		}
+		,
 		showAddAppointment() {
 			this.editorDialogShow = true;
-		},
+		}
+		,
 		showWarning(msg) {
 			this.$message({
 				message: msg,
@@ -313,9 +398,8 @@ export default {
 		}
 	},
 	mounted() {
-		this.editTitle = '添加预约审批';
-		this.editorCommitText = '添 加'
 		this.listAppointments();
+		this.listLabs();
 	}
 }
 </script>

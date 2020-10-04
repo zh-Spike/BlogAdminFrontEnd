@@ -217,4 +217,7 @@ export const checkAppointment = (appointmentId) => {
 export const deleteAppointment = (appointmentId) => {
 	return http.requestDelete('/admin/appointment/' + appointmentId);
 };
-
+// 更新预约状态
+export const updateAppointment = (appointmentId, appointment) => {
+	return http.requestPut('/admin/appointment/update/' + appointmentId, appointment);
+};
