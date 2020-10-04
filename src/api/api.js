@@ -205,3 +205,16 @@ export const updateLab = (labId, lab) => {
 export const deleteLab = (labId) => {
 	return http.requestDelete('/admin/lab/' + labId);
 };
+// 获取预约列表
+export const listAppointments = (page, size) => {
+	return http.requestGet('/admin/appointment/list/' + page + '/' + size);
+};
+// 审批预约
+export const checkAppointment = (appointmentId) => {
+	return http.requestPut('/admin/appointment/' + appointmentId);
+};
+// 状态删除预约 == 驳回
+export const deleteAppointment = (appointmentId) => {
+	return http.requestDelete('/admin/appointment/' + appointmentId);
+};
+
