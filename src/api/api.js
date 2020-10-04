@@ -189,4 +189,19 @@ export const listSigns = () => {
 export const updateSign = (signId) => {
 	return http.requestPut('/admin/sign/' + signId);
 };
-
+// 获取实验室列表
+export const listLabs = () => {
+	return http.requestGet('/admin/lab/list');
+};
+// 添加实验室
+export const postLab = (lab) => {
+	return http.requestPost('/admin/lab', lab);
+};
+// 编辑实验室信息
+export const updateLab = (labId, lab) => {
+	return http.requestPut('/admin/lab/' + labId, lab);
+};
+// 状态删除实验室
+export const deleteLab = (labId) => {
+	return http.requestDelete('/admin/lab/' + labId);
+};

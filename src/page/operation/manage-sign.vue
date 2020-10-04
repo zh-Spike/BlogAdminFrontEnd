@@ -129,8 +129,8 @@ export default {
     padding: 20px;
 }
 
-.sign-list-box .el-table {
-    min-height: 200px;
+.sign-list-box {
+    padding: 10px;
 }
 
 .article-user-name {
@@ -151,5 +151,8 @@ export default {
     display: block;
     line-height: 40px;
     float: left;
+}
+.sign-list-box .el-table {
+    min-height: 200px;
 }
 </style>

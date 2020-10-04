@@ -1,7 +1,7 @@
 <template>
     <div class="category-box">
         <div class="category-action-bar margin-bottom-10">
-            <el-button type="primary" size="mini" @click="showAddCategory">添加分类</el-button>
+            <el-button type="primary" size="medium" @click="showAddCategory">添加分类</el-button>
         </div>
         <div class="category-list-box">
             <el-table
