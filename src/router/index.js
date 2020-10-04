@@ -21,6 +21,9 @@ const index = () => import("@/page/dashboard/index");
 /*
 运营
  */
+const labManage = () => import("@/page/operation/manage-lab");
+const appointmentManage = () => import("@/page/operation/manage-appointment");
+const signManage = () => import("@/page/operation/manage-sign");
 const categoryManage = () => import("@/page/operation/manage-category");
 const loopManage = () => import("@/page/operation/manage-loop");
 /*
@@ -128,7 +131,28 @@ export const routes = [
 						icon: 'el-icon-s-help',
 						hidden: false,
 						component: loopManage,
-					}
+					},
+					{
+						path: 'sign',
+						name: '签到管理',
+						icon: 'el-icon-s-order',
+						hidden: false,
+						component: signManage,
+					},
+					{
+						path: 'lab',
+						name: '实验室管理',
+						icon: 'el-icon-school',
+						hidden: false,
+						component: labManage,
+					},
+					{
+						path: 'appointment',
+						name: '预约审批管理',
+						icon: 'el-icon-s-check',
+						hidden: false,
+						component: appointmentManage,
+					},
 				]
 			},
 			{
@@ -139,11 +163,11 @@ export const routes = [
 				component: rightView,
 				children: [
 					{
-					path: 'email',
-					name: '邮箱设置',
-					icon: 'el-icon-message',
-					hidden: false,
-					component: email,
+						path: 'email',
+						name: '邮箱设置',
+						icon: 'el-icon-message',
+						hidden: false,
+						component: email,
 					},
 					{
 						path: 'info',
