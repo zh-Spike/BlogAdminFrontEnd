@@ -1,8 +1,29 @@
 <template>
     <div class="appointment-box">
+        <div class="appointment-action-bar">
+            <!--文章发表、搜索-->
+            <el-form :inline="true" size="medium">
+                <el-form-item>
+                    <el-input v-model="search.userId" placeholder="请输入用户ID"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-select v-model="search.state" placeholder="请选择状态">
+                        <el-option label="驳回" value="0"></el-option>
+                        <el-option label="审核中" value="1"></el-option>
+                        <el-option label="通过" value="2"></el-option>
+                        <el-option label="所有状态" value=""></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="doSearch">查询</el-button>
+                    <el-button type="danger" @click="cleanSearch">清除</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
         <div class="category-action-bar margin-bottom-10">
             <el-button type="primary" size="medium" @click="showAddAppointment">新建预约</el-button>
         </div>
+
         <div class="appointment-list-box">
             <el-table
                     v-loading="loading"
@@ -18,6 +39,11 @@
                         prop="labName"
                         label="实验室名称"
                         width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="userId"
+                        label="用户ID"
+                        width="200">
                 </el-table-column>
                 <el-table-column
                         label="用户"
@@ -155,8 +181,6 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-
-
                         <el-form-item label="选择实验室">
                             <el-select v-model="appointment.labId">
                                 <el-option v-for="item in labs"
@@ -238,6 +262,10 @@ export default {
 				startTime: '',
 				endTime: ''
 			},
+			search: {
+				userId: '',
+				state: ''
+			},
 			pageNavigation: {
 				currentPage: 1,
 				totalCount: 0,
@@ -246,6 +274,19 @@ export default {
 		};
 	},
 	methods: {
+		cleanSearch() {
+			this.pageNavigation.currentPage = 1;
+			this.pageNavigation.pageSize = 10;
+			this.search.userId = '';
+			this.search.state = '';
+			this.listAppointments();
+		},
+		doSearch() {
+			this.pageNavigation.currentPage = 1;
+			this.pageNavigation.pageSize = 10;
+			// console.log('do article search...')
+			this.listAppointments();
+		},
 		onEditorClose() {
 			this.editorDialogShow = false;
 			this.resetLab();
@@ -369,7 +410,10 @@ export default {
 		,
 		listAppointments() {
 			this.loading = true;
-			api.listAppointments(this.pageNavigation.currentPage, this.pageNavigation.pageSize).then(result => {
+			api.listAppointments(this.pageNavigation.currentPage,
+				this.pageNavigation.pageSize,
+				this.search.state,
+				this.search.userId).then(result => {
 				this.loading = false;
 				//	console.log(result);
 				if (result.code === api.success_code) {

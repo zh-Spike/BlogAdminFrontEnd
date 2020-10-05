@@ -126,7 +126,7 @@ export const topArticle = (articleId) => {
 export const listArticle = (page, size, categoryId, keyword, state) => {
 	let targetUrl = '/admin/article/list/' + page + '/' + size + '?categoryId=' + categoryId + '&keyword=' +
 		keyword + '&state=' + state;
-	console.log(targetUrl);
+	// console.log(targetUrl);
 	return http.requestGet(targetUrl);
 };
 // 真实删除
@@ -206,8 +206,8 @@ export const deleteLab = (labId) => {
 	return http.requestDelete('/admin/lab/' + labId);
 };
 // 获取预约列表
-export const listAppointments = (page, size) => {
-	return http.requestGet('/admin/appointment/list/' + page + '/' + size);
+export const listAppointments = (page, size, state, userId) => {
+	return http.requestGet('/admin/appointment/list/' + page + '/' + size + '?state=' + state + '&userId=' + userId);
 };
 // 审批预约
 export const checkAppointment = (appointmentId) => {
