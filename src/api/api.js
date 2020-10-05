@@ -221,3 +221,7 @@ export const deleteAppointment = (appointmentId) => {
 export const updateAppointment = (appointmentId, appointment) => {
 	return http.requestPut('/admin/appointment/update/' + appointmentId, appointment);
 };
+// 添加预约
+export const postAppointment = (appointment) => {
+	return http.requestPost('/admin/appointment', appointment);
+};

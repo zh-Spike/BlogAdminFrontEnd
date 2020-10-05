@@ -1,5 +1,8 @@
 <template>
     <div class="appointment-box">
+        <div class="category-action-bar margin-bottom-10">
+            <el-button type="primary" size="medium" @click="showAddAppointment">新建预约</el-button>
+        </div>
         <div class="appointment-list-box">
             <el-table
                     v-loading="loading"
@@ -128,15 +131,7 @@
                         <el-table
                                 ref="singleTable"
                                 :data="labs"
-                                highlight-current-row
-                                @current-change="handleCurrentChange"
-                                style="width: 100%;
-                                padding-bottom: 20px">
-                            <el-table-column
-                                    property="id"
-                                    label="ID"
-                                    width="200">
-                            </el-table-column>
+                                style="width: 100%;padding-bottom: 20px">
                             <el-table-column
                                     property="labName"
                                     label="实验室名称"
@@ -160,18 +155,22 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <div style="margin-top: 20px">
-                            <el-button @click="setCurrent()">取消选择</el-button>
-                        </div>
-                        <!--                        <el-form-item label="实验室ID">-->
-                        <!--                            <el-input v-model="appointment.labId" placeholder="输入实验室ID">{{ this.lab.id }}}-->
-                        <!--                            </el-input>-->
-                        <!--                        </el-form-item>-->
+
+
+                        <el-form-item label="选择实验室">
+                            <el-select v-model="appointment.labId">
+                                <el-option v-for="item in labs"
+                                           :key="item.id"
+                                           :label="item.labName"
+                                           :disabled="item.state==='0'"
+                                           :value="item.id"></el-option>
+                            </el-select>
+                        </el-form-item>
                         <el-form-item label="预约人数">
                             <el-input v-model="appointment.appointmentNumber"></el-input>
                         </el-form-item>
                         <el-form-item label="状态">
-                            <el-select v-model="appointment.state" placeholder="选择状态">
+                            <el-select v-model="appointment.state">
                                 <el-option label="驳回" value="0"></el-option>
                                 <el-option label="审批中" value="1"></el-option>
                                 <el-option label="通过" value="2"></el-option>
@@ -247,13 +246,6 @@ export default {
 		};
 	},
 	methods: {
-		setCurrent(row) {
-			this.$refs.singleTable.setCurrentRow(row);
-		},
-		handleCurrentChange(val) {
-			this.currentRow = val;
-			// console.log(this.lab);
-		},
 		onEditorClose() {
 			this.editorDialogShow = false;
 			this.resetLab();
@@ -280,24 +272,45 @@ export default {
 				this.showWarning('时间不要搞错┗|｀O′|┛ 嗷~~');
 				return;
 			}
-			// console.log(this.appointment);
-			api.updateAppointment(this.appointment.id, this.appointment).then(result => {
-				if (result.code === api.success_code) {
-					this.$message.success(result.message);
+			if (this.appointment.id === '') {
+				// 如果没有ID的就是添加
+				api.postAppointment(this.appointment).then(result => {
 					this.editorDialogShow = false;
-					this.listAppointments();
-					this.resetAppointment();
-				} else {
-					this.$message.error(result.message);
-				}
-			})
+					if (result.code === api.success_code) {
+						this.$message({
+							message: '添加成功',
+							center: true,
+							type: 'success'
+						});
+						// 刷新列表
+						this.listAppointments();
+						// 重置数据
+						this.resetAppointment();
+					} else {
+						this.showWarning(result.message);
+					}
+				});
+			} else {
+				// console.log(this.appointment);
+				api.updateAppointment(this.appointment.id, this.appointment).then(result => {
+					if (result.code === api.success_code) {
+						this.$message.success(result.message);
+						this.editorDialogShow = false;
+						this.listAppointments();
+						this.resetAppointment();
+					} else {
+						this.$message.error(result.message);
+					}
+				})
+			}
 		}
 		,
 		edit(item) {
 			// 赋值 先请求单个数据 再显示 数据回显
 			this.appointment.id = item.id;
 			// 显示dialog
-			// this.appointment.labId = item.labId;
+			console.log(this.currentRow);
+			this.appointment.labId = item.labId;
 			this.appointment.appointmentNumber = item.appointmentNumber;
 			this.appointment.startTime = item.startTime;
 			this.appointment.endTime = item.endTime;
@@ -308,7 +321,6 @@ export default {
 		}
 		,
 		resetAppointment() {
-			this.appointment.labId = '';
 			this.appointment.appointmentNumber = '';
 			this.appointment.state = '1';
 			this.appointment.startTime = '';
