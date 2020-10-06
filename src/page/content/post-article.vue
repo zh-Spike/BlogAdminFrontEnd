@@ -257,7 +257,7 @@ export default {
 				this.$message.error('请设置标签');
 				return;
 			}
-			let tempLabels;
+			let tempLabels = '';
 			// 处理标签
 			this.labels.forEach((item, index) => {
 				tempLabels += item;
@@ -266,7 +266,7 @@ export default {
 				}
 			});
 			this.article.label = tempLabels;
-			console.log('label ==> ' + this.article.label);
+			// console.log('label ==> ' + this.article.label);
 			// 到底是更新还是发布
 			// 判断articleId是否存在 如果存在，文章更新 否则就是发布
 			if (this.article.id === '') {
