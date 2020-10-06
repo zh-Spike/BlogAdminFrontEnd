@@ -127,11 +127,11 @@
                 </span>
             </el-dialog>
             <el-dialog
-                    title="确定要离开吗?"
+                    title="确定要离开吗?/(ㄒoㄒ)/~~"
                     :visible.sync="saveConfirmDialogShow"
                     width="500px"
                     center>
-                <span>系统可能不会保存填写的文章信息噢...(`;Ω;`)</span>
+                <span>系统可能不会保存填写的文章信息噢... (⊙⊙！) </span>
                 <span slot="footer" class="dialog-footer">
                     <el-button size="medium" @click="saveConfirmDialogShow=false">取消</el-button>
                     <el-button size="medium" type="primary" @click="toNextPage">确定</el-button>
@@ -165,7 +165,7 @@ export default {
 			isEnough: false,
 			labelNewValue: '',
 			labelInputVisible: false,
-			labels: ['java', 'vue.js'],
+			labels: [],
 			categories: [],
 			article: {
 				id: '',
@@ -344,13 +344,13 @@ export default {
 			// 显示图片编辑器
 			this.isImageSelectorShow = true;
 		},
-		htmlCode(status, value) {
-			console.log(status);
-			console.log(value);
+		htmlCode() {
+			// console.log(status);
+			// console.log(value);
 		},
-		onContentChange(value, render) {
-			console.log(value);
-			console.log(render);
+		onContentChange() {
+			// console.log(value);
+			// console.log(render);
 		},
 		showLabelInput() {
 			// 判断个数 限制5个
@@ -360,6 +360,9 @@ export default {
 			} else {
 				this.labelInputVisible = false;
 			}
+			this.$nextTick(() => {
+				this.$refs.saveTagInput.$refs.input.focus();
+			})
 		},
 		handleLabelInputConfirm() {
 			// 时机: 回车
