@@ -355,11 +355,7 @@ export default {
 		showLabelInput() {
 			// 判断个数 限制5个
 			// 控制输入框的显示
-			if (this.labels.length < 5) {
-				this.labelInputVisible = true;
-			} else {
-				this.labelInputVisible = false;
-			}
+			this.labelInputVisible = this.labels.length < 5;
 			this.$nextTick(() => {
 				this.$refs.saveTagInput.$refs.input.focus();
 			})
@@ -433,7 +429,7 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		console.log('before destory...');
+		// console.log('before destory...');
 		window.onbeforeunload = null;
 	},
 	mounted() {
