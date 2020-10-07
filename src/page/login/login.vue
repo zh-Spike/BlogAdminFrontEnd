@@ -27,7 +27,7 @@
                                 <img :src="captchaPath" @click="updateVerifyCode" class="captcha-code">
                             </el-form-item>
                             <el-form-item class="login-button">
-                                <el-button type="primary" @click="doLogin" size="small">登录</el-button>
+                                <el-button type="primary" @click="doLogin" size="medium">登录</el-button>
                             </el-form-item>
                         </el-form>
                     </el-col>

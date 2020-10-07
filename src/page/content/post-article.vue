@@ -434,7 +434,7 @@ export default {
 	},
 	mounted() {
 		window.onbeforeunload = function () {
-			return '系统可能不会保存已填写的稿件信息噢';
+			return '系统可能不会保存已填写的稿件信息噢/(ㄒoㄒ)/~~';
 		}
 		// 是否要获取文章详情
 		let articleId = this.$route.query.articleId;
