@@ -37,7 +37,7 @@
                         <!--                            <el-tag type="danger" size="medium">已删除</el-tag>-->
                         <!--                        </div>-->
                         <div v-if="scope.row.state === '3'">
-                            <el-tag type="danger" size="medium">置顶</el-tag>
+                            <el-tag type="success" size="medium">置顶</el-tag>
                         </div>
                         <div v-if="scope.row.state === '1'">
                             <el-tag type="primary" size="medium">正常</el-tag>
@@ -65,19 +65,19 @@
                 <el-table-column
                         fixed="right"
                         label="操作"
-                        width="250">
+                        width="300">
                     <template slot-scope="scope">
                         <!--                        <el-button type="primary" size="mini" @click="edit(scope.row)">编辑</el-button>-->
-                        <el-button type="danger" v-if="scope.row.state !== '0'" size="mini"
+                        <el-button type="danger" v-if="scope.row.state !== '0'" size="medium"
                                    @click="deleteItem(scope.row)">删除
                         </el-button>
                         <!--                        <el-button type="danger" v-if="scope.row.state === '0'" size="mini"-->
                         <!--                                   @click="deleteItem(scope.row)" disabled>删除-->
                         <!--                        </el-button>-->
-                        <el-button type="info" size="mini" v-if="scope.row.state==='3'"
-                                   @click="top(scope.row)">取消置顶
+                        <el-button type="primary" size="medium" v-if="scope.row.state==='3'"
+                                   @click="top(scope.row)">取消
                         </el-button>
-                        <el-button type="success" v-else size="mini" @click="top(scope.row)">置顶</el-button>
+                        <el-button type="success" v-else size="medium" @click="top(scope.row)">置顶</el-button>
                     </template>
                 </el-table-column>
             </el-table>

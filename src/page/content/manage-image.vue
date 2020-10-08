@@ -72,7 +72,7 @@
                         label="操作"
                         width="250">
                     <template slot-scope="scope">
-                        <el-button type="danger" v-if="scope.row.state !== '0'" size="mini"
+                        <el-button type="danger" v-if="scope.row.state !== '0'" size="medium"
                                    @click="deleteItem(scope.row)">删除
                         </el-button>
                     </template>

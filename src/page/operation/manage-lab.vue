@@ -249,7 +249,7 @@ export default {
 			this.lab.id = '';
 			this.lab.labName = '';
 			this.lab.labNumber = '';
-			this.lab.state = '';
+			this.lab.state = '1';
 			this.editorDialogShow = true;
 		},
 		showWarning(msg) {

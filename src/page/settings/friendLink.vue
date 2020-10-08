@@ -78,6 +78,7 @@
             <el-dialog
                     :close-on-press-escape="false"
                     :close-on-click-modal="false"
+                    :show-close="false"
                     :title="friendEditorTitle"
                     :visible.sync="friendLinkDialogShow"
                     width="600px">
@@ -213,7 +214,7 @@ export default {
 			this.link.name = '';
 			this.link.logo = '';
 			this.link.order = '';
-			this.link.state = '';
+			this.link.state = '1';
 			this.link.url = '';
 			this.friendLinkDialogShow = true;
 			this.friendLinkEditorDialogCommitText = '添 加';
