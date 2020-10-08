@@ -241,9 +241,9 @@ export default {
 	data() {
 		return {
 			loading: false,
-			editorCommitText: '修改信息',
+			editorCommitText: '添加',
 			editorDialogShow: false,
-			editTitle: '编辑信息',
+			editTitle: '新增预约',
 			appointments: [],
 			labs: [],
 			deleteDialogShow: false,
@@ -344,13 +344,12 @@ export default {
 					}
 				})
 			}
-		}
-		,
+		},
 		edit(item) {
 			// 赋值 先请求单个数据 再显示 数据回显
 			this.appointment.id = item.id;
 			// 显示dialog
-			console.log(this.currentRow);
+			// console.log(this.currentRow);
 			this.appointment.labId = item.labId;
 			this.appointment.appointmentNumber = item.appointmentNumber;
 			this.appointment.startTime = item.startTime;
@@ -359,15 +358,13 @@ export default {
 			this.editorDialogShow = true;
 			this.editorCommitText = '修改信息';
 			this.editTitle = '编辑预约申请';
-		}
-		,
+		},
 		resetAppointment() {
 			this.appointment.appointmentNumber = '';
 			this.appointment.state = '1';
 			this.appointment.startTime = '';
 			this.appointment.endTime = '';
-		}
-		,
+		},
 		checkAppointment(item) {
 			api.checkAppointment(item.id).then(result => {
 				if (result.code === api.success_code) {
@@ -379,21 +376,18 @@ export default {
 					this.listAppointments();
 				}
 			})
-		}
-		,
+		},
 		deleteItem(item) {
 			// 不是马上删除 弹出确认方框
 			this.deleteDialogShow = true;
 			this.deleteMessage = item.userName;
 			this.deleteTargetId = item.id
 			// console.log(item);
-		}
-		,
+		},
 		formatDate(dateStr) {
 			let date = new Date(dateStr);
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		}
-		,
+		},
 		doDeleteItem() {
 			api.deleteAppointment(this.deleteTargetId).then(result => {
 				if (result.code === api.success_code) {
@@ -406,8 +400,7 @@ export default {
 				}
 			});
 			this.deleteDialogShow = false;
-		}
-		,
+		},
 		listAppointments() {
 			this.loading = true;
 			api.listAppointments(this.pageNavigation.currentPage,
@@ -423,8 +416,7 @@ export default {
 					this.pageNavigation.pageSize = result.data.size;
 				}
 			});
-		}
-		,
+		},
 		listLabs() {
 			this.loading = true;
 			api.listLabs().then(result => {
@@ -434,17 +426,19 @@ export default {
 					this.labs = result.data;
 				}
 			});
-		}
-		,
+		},
 		onPageChange(page) {
 			this.pageNavigation.currentPage = page;
 			this.listAppointments();
-		}
-		,
+		},
 		showAddAppointment() {
+			this.appointment.id = '';
+			this.appointment.labId = '';
+			this.appointment.appointmentNumber = '';
+			this.appointment.startTime = '';
+			this.appointment.endTime = '';
 			this.editorDialogShow = true;
-		}
-		,
+		},
 		showWarning(msg) {
 			this.$message({
 				message: msg,
@@ -454,6 +448,8 @@ export default {
 		}
 	},
 	mounted() {
+		this.editTitle = '添加预约';
+		this.editorCommitText = '添 加'
 		this.listAppointments();
 		this.listLabs();
 	}

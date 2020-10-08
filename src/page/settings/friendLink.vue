@@ -202,7 +202,6 @@ export default {
 				if (result.code === api.success_code) {
 					this.links = result.data;
 				}
-
 			})
 		},
 		formatDate(dateStr) {
@@ -210,6 +209,12 @@ export default {
 			return dateUtils.formatDate(date, 'yyyy-MM-dd hh:mm:ss');
 		},
 		showFriendLinkDialog() {
+			this.link.id = '';
+			this.link.name = '';
+			this.link.logo = '';
+			this.link.order = '';
+			this.link.state = '';
+			this.link.url = '';
 			this.friendLinkDialogShow = true;
 			this.friendLinkEditorDialogCommitText = '添 加';
 			this.friendEditorTitle = '添加友情链接';

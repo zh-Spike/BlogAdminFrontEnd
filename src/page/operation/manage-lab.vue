@@ -17,21 +17,21 @@
                 <el-table-column
                         prop="labName"
                         label="实验室名称"
-                        width="150">
+                        width="250">
                 </el-table-column>
                 <el-table-column
                         prop="labNumber"
                         label="实验室容量"
-                        width="100">
+                        width="150">
                 </el-table-column>
                 <el-table-column
                         prop="labAvailable"
                         label="可用容量"
-                        width="100">
+                        width="150">
                 </el-table-column>
                 <el-table-column
                         label="状态"
-                        width="100">
+                        width="150">
                     <template slot-scope="scope">
                         <div v-if="scope.row.state === '0'">
                             <el-tag type="danger">不可用</el-tag>
@@ -62,7 +62,7 @@
                 <el-table-column
                         fixed="right"
                         label="操作"
-                        width="200">
+                        width="300">
                     <template slot-scope="scope">
                         <el-button type="primary" size="medium" @click="edit(scope.row)">编辑</el-button>
                         <el-button type="danger" v-if="scope.row.state !== '0'" size="medium"
@@ -129,9 +129,9 @@ export default {
 	data() {
 		return {
 			loading: false,
-			editorCommitText: '修改信息',
+			editorCommitText: '添加信息',
 			editorDialogShow: false,
-			editTitle: '编辑信息',
+			editTitle: '添加实验室',
 			labs: [],
 			deleteDialogShow: false,
 			deleteMessage: '',
@@ -246,6 +246,10 @@ export default {
 			});
 		},
 		showAddLab() {
+			this.lab.id = '';
+			this.lab.labName = '';
+			this.lab.labNumber = '';
+			this.lab.state = '';
 			this.editorDialogShow = true;
 		},
 		showWarning(msg) {
