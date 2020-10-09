@@ -131,7 +131,7 @@
                     :visible.sync="saveConfirmDialogShow"
                     width="500px"
                     center>
-                <span>系统可能不会保存填写的文章信息噢... (⊙⊙！) </span>
+                <span>系统可能不会保存填写的文章信息噢...</span>
                 <span slot="footer" class="dialog-footer">
                     <el-button size="medium" @click="saveConfirmDialogShow=false">取消</el-button>
                     <el-button size="medium" type="primary" @click="toNextPage">确定</el-button>
