@@ -30,13 +30,13 @@ router.beforeEach((to, from, next) => {
 		api.checkToken().then(result => {
 			// console.log(result);
 			if (result.code === api.success_code) {
-				window.localStorage.setItem('avatar',result.data.avatar);
-				window.localStorage.setItem('userName',result.data.userName);
+				window.localStorage.setItem('avatar', result.data.avatar);
+				window.localStorage.setItem('userName', result.data.userName);
 				// 登录成功 判断角色
 				if (result.data.roles === 'role_admin') {
 					next();
 				} else {
-					location.href = 'https://www.baidu.com';
+					location.href = 'http://localhost:3000/';
 				}
 			} else {
 				next({
