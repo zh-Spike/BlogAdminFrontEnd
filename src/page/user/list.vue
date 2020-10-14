@@ -139,12 +139,14 @@
                     <div class="reset-tips-text">修改: {{ '"' + targetResetUserName + '"' }} 的密码</div>
                     <el-form label-width="70px" size="medium">
                         <el-form-item label="新密码" prop="pass">
-                            <el-input type="password" v-model="resetPasswordValue" autocomplete="off"></el-input>
+                            <el-input v-model="resetPasswordValue" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                    <el-button size="medium" type="primary" @click="resetPasswordShow= false">取 消</el-button>
+                    <el-button size="medium" type="primary"
+                               @click="resetPasswordShow= false;
+                                        resetPasswordValue=''">取 消</el-button>
 					<el-button size="medium" type="danger" @click="doResetPassword">确 定</el-button>
 				</span>
             </el-dialog>
@@ -191,10 +193,11 @@ export default {
 				if (result.code === api.success_code) {
 					this.resetPasswordShow = false;
 					this.$message.success(result.message);
+					this.resetPasswordValue = '';
 				} else {
 					this.$message.error(result.message);
+					this.resetPasswordValue = '';
 				}
-
 			})
 		},
 		doDeleteItem() {
