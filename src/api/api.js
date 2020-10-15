@@ -7,8 +7,8 @@ export const checkToken = () => {
 	return http.requestGet('/user/check_token');
 };
 // 登录
-export const doLogin = (verifyCode, captchaKey, user) => {
-	return http.requestPost('/user/login/' + verifyCode + '/' + captchaKey + '?from=p_', user);
+export const doLogin = (verifyCode, user) => {
+	return http.requestPost('/user/login/' + verifyCode + '/?from=p_', user);
 };
 // 获取分类列表
 export const listCategories = () => {

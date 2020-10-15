@@ -52,7 +52,6 @@ export default {
 			},
 			loginInfo: {
 				verifyCode: '',
-				captcha_key: ''
 			},
 			captchaPath: ''
 		}
@@ -82,7 +81,7 @@ export default {
 			}
 			this.user.password = hex_md5(this.originalPassword);
 			// 向服务器提交数据
-			api.doLogin(this.loginInfo.verifyCode, this.loginInfo.captcha_key, this.user).then(result => {
+			api.doLogin(this.loginInfo.verifyCode,  this.user).then(result => {
 				// 处理登陆结果
 				// 判断状态
 				if (result.code === api.success_code) {
@@ -103,13 +102,12 @@ export default {
 			});
 		},
 		updateVerifyCode() {
-			this.captchaPath = '/user/captcha?captcha_key=' + this.loginInfo.captcha_key + "&random" + Date.parse(new Date());
+			this.captchaPath = '/user/captcha?' + "&random" + Date.parse(new Date());
 			console.log(this.captchaPath);
 		}
 	},
 	mounted() {
 		// TODO: 检查登录是否有效
-		this.loginInfo.captcha_key = Date.parse(new Date());
 		this.updateVerifyCode();
 	}
 }
