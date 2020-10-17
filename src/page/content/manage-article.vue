@@ -43,9 +43,13 @@
                         width="200">
                 </el-table-column>
                 <el-table-column
-                        prop="title"
                         label="标题"
                         width="300">
+                    <template slot-scope="scope">
+                        <a :href="'http://localhost:3000/article/' +scope.row.id" target="_blank">
+                            <span class="article-title" v-text="scope.row.title"></span>
+                        </a>
+                    </template>
                 </el-table-column>
                 <el-table-column
                         prop="viewCount"
@@ -288,6 +292,13 @@ export default {
     color: #222222;
 }
 
+.article-title:hover {
+    color: #A612FF;
+}
+.article-title {
+    font-weight: 600;
+    color: #999999;
+}
 .article-user-avatar {
     display: block;
 }
