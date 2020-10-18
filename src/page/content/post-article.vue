@@ -429,7 +429,7 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		// console.log('before destory...');
+		// console.log('before destroy...');
 		window.onbeforeunload = null;
 	},
 	mounted() {
