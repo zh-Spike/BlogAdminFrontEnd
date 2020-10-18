@@ -15,7 +15,6 @@
                     <el-button type="warning" @click="cleanSearch">清 空</el-button>
                 </el-form-item>
             </el-form>
-            >
         </div>
         <!--显示内容-->
         <div class="list-box margin-bottom-20">

@@ -1,7 +1,7 @@
 <template>
     <div class="head-part clearfix">
         <div class="header-left-box float-left">
-            <div class="head-logo">博客系统管理中心</div>
+            <div class="head-logo">实验室系统管理中心</div>
         </div>
         <div class="header-right-box float-right">
             <div class="header-user-info clearfix">
