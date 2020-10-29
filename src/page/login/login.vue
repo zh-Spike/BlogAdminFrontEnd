@@ -5,7 +5,7 @@
         <div class="admin-login-header-box">
             <div class="admin-login-header-center center">
                 <div class="admin-login-logo">
-                    博客系统 | 登录
+                    实验室管理系统 | 登录
                 </div>
             </div>
         </div>

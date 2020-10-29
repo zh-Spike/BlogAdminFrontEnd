@@ -46,7 +46,7 @@
                         label="标题"
                         width="300">
                     <template slot-scope="scope">
-                        <a :href="'http://localhost:3000/article/' +scope.row.id" target="_blank">
+                        <a :href="blog_constant.portalBaseUrl+'/article/' +scope.row.id" target="_blank">
                             <span class="article-title" v-text="scope.row.title"></span>
                         </a>
                     </template>

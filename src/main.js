@@ -36,7 +36,7 @@ router.beforeEach((to, from, next) => {
 				if (result.data.roles === 'role_admin') {
 					next();
 				} else {
-					location.href = 'http://localhost:3000/';
+					location.href = this.blog_constant.portalBaseUrl;
 				}
 			} else {
 				next({
