@@ -28,6 +28,7 @@
             <el-table
                     v-loading="loading"
                     :data="appointments"
+                    :row-class-name="tableRowClassName"
                     style="width: 100%">
                 <el-table-column
                         fixed
@@ -270,7 +271,8 @@ export default {
 				currentPage: 1,
 				totalCount: 0,
 				pageSize: 10,
-			}
+			},
+			currentTime: new Date(),
 		};
 	},
 	methods: {
@@ -401,6 +403,12 @@ export default {
 			});
 			this.deleteDialogShow = false;
 		},
+		tableRowClassName({row}) {
+			if (row.state === "2" && Date.parse(row.startTime)>new Date()) {
+				return 'success-row';
+			}
+			return '';
+		},
 		listAppointments() {
 			this.loading = true;
 			api.listAppointments(this.pageNavigation.currentPage,
@@ -487,5 +495,9 @@ export default {
     display: block;
     line-height: 40px;
     float: left;
+}
+
+.el-table .success-row {
+    background: #f0f9eb;
 }
 </style>

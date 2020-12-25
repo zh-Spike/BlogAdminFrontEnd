@@ -1,6 +1,6 @@
 const baseUrl = 'http://localhost:8080';
 const imageBaseUrl = '/portal/image/';
-const portalBaseUrl = 'http://hdulabres.imztj.cn';
+const portalBaseUrl = 'http://www.hdulab.com';
 export default {
 	portalBaseUrl,
 	baseUrl,

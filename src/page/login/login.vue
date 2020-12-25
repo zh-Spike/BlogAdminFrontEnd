@@ -102,8 +102,8 @@ export default {
 			});
 		},
 		updateVerifyCode() {
-			this.captchaPath = '/user/captcha?' + "&random" + Date.parse(new Date());
-			console.log(this.captchaPath);
+			this.captchaPath = '/user/captcha?' + "&random=" + Date.parse(new Date());
+			// console.log(this.captchaPath);
 		}
 	},
 	mounted() {
